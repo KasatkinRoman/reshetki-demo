@@ -130,7 +130,7 @@ function grilleSvg(wMm, hMm, boxW, boxH, color) {
   const x0 = (boxW - w) / 2, y0 = 8;
   const cols = Math.max(3, Math.round(w / 18));
   const step = w / cols;
-  const rows = 3, rowH = h / rows;
+  const rows = SCISSOR_ROWS, rowH = h / rows;
   let lattice = "", posts = "";
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {

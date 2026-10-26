@@ -1,3 +1,6 @@
+/* Two tiers of scissors in every model: three-tier grilles are not made. */
+const SCISSOR_ROWS = 2;
+
 /*
  * Catalog and prices for the calculator (RUB).
  * Source tags:

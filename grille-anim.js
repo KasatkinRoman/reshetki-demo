@@ -10,6 +10,8 @@
   const X0 = 48;
   const XMAX = 740;
   const KEY_STEP = 40;
+  /* The company makes grilles with two tiers of scissors only. */
+  const SCISSOR_ROWS = 2;
   const DEMO_DELAY_MS = 500;
   const DEMO_PAUSE_MS = 600;
   const DEMO_OPEN_SHARE = 0.35;
@@ -21,21 +23,21 @@
 
   /* support: "top" — hung on carriages in the top rail; "bottom" — rolls on a bottom roller; "wheels" — free-standing screen. */
   const KINDS = {
-    econom: { support: "bottom", rollers: 1, rows: 4, postW: 12, barW: 5, palette: "paint", lock: "lock",
+    econom: { support: "bottom", rollers: 1, rows: SCISSOR_ROWS, postW: 12, barW: 5, palette: "paint", lock: "lock",
       cards: ["bottomRoller", "topGuide", "scissors", "lock"] },
-    standard: { support: "top", rollers: 1, rows: 5, postW: 14, barW: 6, palette: "paint", lock: "lock",
+    standard: { support: "top", rollers: 1, rows: SCISSOR_ROWS, postW: 14, barW: 6, palette: "paint", lock: "lock",
       cards: ["topCarriage", "bottomPin", "scissors", "lock"] },
-    silent: { support: "top", rollers: 2, rows: 5, postW: 14, barW: 6, palette: "paint", lock: "lock",
+    silent: { support: "top", rollers: 2, rows: SCISSOR_ROWS, postW: 14, barW: 6, palette: "paint", lock: "lock",
       cards: ["twinCarriage", "bottomPin", "scissors", "lock"] },
-    strong: { support: "top", rollers: 2, rows: 6, postW: 18, barW: 7, palette: "paint", lock: "lock", heavy: true,
+    strong: { support: "top", rollers: 2, rows: SCISSOR_ROWS, postW: 18, barW: 7, palette: "paint", lock: "lock", heavy: true,
       cards: ["twinCarriage", "heavyFrame", "scissors", "lock"] },
-    bank: { support: "top", rollers: 2, rows: 7, postW: 22, barW: 8, palette: "paint", lock: "bankLock", heavy: true,
+    bank: { support: "top", rollers: 2, rows: SCISSOR_ROWS, postW: 22, barW: 8, palette: "paint", lock: "bankLock", heavy: true,
       cards: ["twinCarriage", "bankPost", "heavyFrame", "bankLock"] },
-    screen: { support: "wheels", rollers: 0, rows: 5, postW: 12, barW: 5, palette: "paint", lock: "latch",
+    screen: { support: "wheels", rollers: 0, rows: SCISSOR_ROWS, postW: 12, barW: 5, palette: "paint", lock: "latch",
       cards: ["wheel", "noRails", "scissors", "latch"] },
-    art: { support: "top", rollers: 1, rows: 5, postW: 14, barW: 6, palette: "patina", lock: "lock", decor: true,
+    art: { support: "top", rollers: 1, rows: SCISSOR_ROWS, postW: 14, barW: 6, palette: "patina", lock: "lock", decor: true,
       cards: ["topCarriage", "patina", "scissors", "lock"] },
-    steel: { support: "top", rollers: 1, rows: 5, postW: 14, barW: 6, palette: "steel", lock: "lock",
+    steel: { support: "top", rollers: 1, rows: SCISSOR_ROWS, postW: 14, barW: 6, palette: "steel", lock: "lock",
       cards: ["topCarriage", "stainless", "scissors", "lock"] },
   };
 
@@ -94,7 +96,7 @@
        <rect x="92" y="20" width="16" height="110" fill="#8a9397" stroke="#555d61" stroke-width="2"/>
        <rect x="144" y="20" width="16" height="110" fill="#8a9397" stroke="#555d61" stroke-width="2"/>
        <line x1="48" y1="40" x2="152" y2="110" stroke="${ACCENT}" stroke-width="8"/><line x1="152" y1="40" x2="48" y2="110" stroke="${ACCENT}" stroke-width="8"/>`,
-      "Стойки — полоса 40×6 мм, ячейка мельче. Сквозь решётку нельзя просунуть руку или инструмент."],
+      "Стойки — стальная полоса 40×6 мм вместо трубы: её не перекусить и не согнуть ломом."],
     wheel: ["Колёсные опоры",
       `<rect x="86" y="10" width="28" height="90" ${POST}/><path d="M84 100H116L110 116H90Z" fill="#6f787d"/>
        <circle cx="100" cy="126" r="14" fill="${ACCENT}" stroke="#555d61" stroke-width="2"/><line x1="20" y1="142" x2="180" y2="142" stroke="#555d61" stroke-width="3"/>`,
@@ -192,7 +194,7 @@
   function labelSpecs(kind, s, h, xR, g) {
     const handleText = { lock: "Ручка и замок", bankLock: "Банковский замок", latch: "Ручка и фиксатор" }[kind.lock];
     const handle = [xR + kind.postW / 2 + 5, 223, Math.min(xR - 60, 690), 300, handleText];
-    const rivet = [X0 + s * 0.5, g.top + 12 + h * 2.5, Math.max(X0 + s * 0.5 + 120, 260), 190,
+    const rivet = [X0 + s * 0.5, g.top + 12 + h * 0.5, Math.max(X0 + s * 0.5 + 120, 260), 190,
       kind.decor ? "Заклёпки с патиной" : "Шарнирная заклёпка"];
     if (kind.support === "bottom") {
       return [[X0 + s * 1.5, g.top - 4, X0 + s * 1.5 + 150, 80, "Верхняя направляющая"], rivet,
