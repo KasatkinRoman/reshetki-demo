@@ -355,7 +355,10 @@ function renderCatalog() {
       <h3>${c.name}</h3><p>${c.hint}</p>
       <div class="grid-4">${MODELS.filter((m) => m.category === c.id).map((m) => `
         <div class="card model-card">
-          <svg viewBox="0 0 220 120" width="100%" height="120" aria-hidden="true">${grilleSvg(1200, 1000, 220, 120, "#3a424b")}</svg>
+          <button type="button" class="model-preview" data-act="anim" data-val="${m.id}" aria-label="${m.name}: как открывается и устроена">
+            <svg viewBox="0 0 220 120" width="100%" height="120" aria-hidden="true">${grilleSvg(1200, 1000, 220, 120, "#3a424b")}</svg>
+            <span class="play">▶ Как открывается</span>
+          </button>
           <h3 style="margin-top:12px">${m.name}${demoTag(m)}</h3>
           <span class="hint">${m.tagline}</span>
           <p>${m.about}</p>

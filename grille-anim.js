@@ -10,6 +10,9 @@
   const X0 = 48;
   const XMAX = 740;
   const KEY_STEP = 40;
+  const DEMO_DELAY_MS = 500;
+  const DEMO_PAUSE_MS = 600;
+  const DEMO_OPEN_SHARE = 0.35;
   const PALETTES = {
     paint: { post: ["#7d868b", "#c9d0d3"], bars: ["#8a9397", "#a5adb1"], dark: "#5b6367", line: "#6f787d", rail: ["#c9d0d3", "#7d868b"] },
     steel: { post: ["#9aa4aa", "#f1f4f6"], bars: ["#b4bcc1", "#d6dcdf"], dark: "#7b858b", line: "#8d969b", rail: ["#eef2f4", "#9aa4aa"] },
@@ -321,12 +324,15 @@
       }
     }
 
+    let demoTimer = null;
+
     function stop() {
       if (frame) cancelAnimationFrame(frame);
+      clearTimeout(demoTimer);
       frame = null;
     }
 
-    function animateTo(target) {
+    function animateTo(target, onDone) {
       stop();
       const from = xR;
       if (reduceMotion) {
@@ -342,6 +348,7 @@
         xR = from + (target - from) * eased;
         render();
         if (t < 1) frame = requestAnimationFrame(step);
+        else if (onDone) onDone();
       };
       frame = requestAnimationFrame(step);
     }
@@ -390,6 +397,12 @@
     });
 
     render();
+    // A short demo shows that the grille moves: half open, then closed again. Any touch stops it.
+    if (!reduceMotion) {
+      demoTimer = setTimeout(() => animateTo(xMin + (XMAX - xMin) * DEMO_OPEN_SHARE, () => {
+        demoTimer = setTimeout(() => animateTo(XMAX), DEMO_PAUSE_MS);
+      }), DEMO_DELAY_MS);
+    }
     return stop;
   }
 
