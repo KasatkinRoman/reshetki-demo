@@ -206,3 +206,31 @@ dialog::backdrop { background: rgba(10,12,14,.55); }
   .mobile-total .btn { padding: 12px 16px; }
   body.has-total { padding-bottom: 72px; }
 }
+
+/* Grille diagram dialog (grille-anim.js) */
+dialog.grille-dialog { width: min(920px, calc(100% - 24px)); background: #eceef0; }
+.dlg-close { position: absolute; top: 8px; right: 10px; z-index: 1; width: 36px; height: 36px; border: 0; border-radius: 50%;
+  background: #fff; font-size: 24px; line-height: 1; cursor: pointer; color: var(--ink); }
+.hg-wrap { padding: 16px; color: var(--ink); }
+.hg-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin: 0 40px 10px 0; }
+.hg-title { font-size: 18px; font-weight: 700; margin: 0; }
+.hg-hint { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+.hg-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.hg-btn { font: inherit; font-size: 14px; border: 1px solid var(--steel-2); background: #fff; color: var(--ink);
+  padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.hg-btn:hover { background: var(--surface-2); }
+.hg-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.hg-svg { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+.hg-handle { cursor: grab; outline: none; }
+.hg-handle:active { cursor: grabbing; }
+.hg-handle:focus-visible rect:first-child { stroke: var(--accent); stroke-width: 3; }
+.hg-label text { font-size: 13px; fill: var(--ink); font-weight: 600; }
+.hg-label rect { fill: #fff; stroke: var(--accent); stroke-width: 1.2; }
+.hg-explain { display: none; margin-top: 12px; gap: 12px; grid-template-columns: 1fr 1fr; }
+.hg-explain.on { display: grid; }
+.hg-card { background: #fff; border-radius: 10px; padding: 10px; border: 1px solid var(--line); }
+.hg-card h4 { margin: 0 0 6px; font-size: 14px; }
+.hg-card p { margin: 6px 0 0; font-size: 13px; line-height: 1.4; }
+.hg-card svg { width: 100%; height: auto; max-height: 140px; display: block; }
+.link-btn { border: 0; background: none; padding: 0; font: inherit; color: inherit; text-decoration: underline; cursor: pointer; font-weight: 600; }
+@media (max-width: 600px) { .hg-explain { grid-template-columns: 1fr; } .hg-title { font-size: 16px; } }

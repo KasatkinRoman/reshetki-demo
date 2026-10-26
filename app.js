@@ -199,7 +199,7 @@ function renderModels(o) {
     <button type="button" class="model" aria-pressed="${o.model === m.id}" data-act="model" data-val="${m.id}">
       <b>${m.name}${demoTag(m)}</b><span>${m.tagline}</span><span class="p">${rub(m.perM2)}/м²</span>
     </button>`).join("");
-  el("modelAbout").innerHTML = `<b>${model.name}:</b> ${model.about}`;
+  el("modelAbout").innerHTML = `<b>${model.name}:</b> ${model.about} <button type="button" class="link-btn" data-act="anim" data-val="${model.id}">Как открывается и устроена →</button>`;
 }
 
 function renderFinish(o) {
@@ -364,15 +364,33 @@ function renderCatalog() {
             <li><span>Вес</span><span>${m.weight} кг/м²</span></li>
             <li><span>Цена</span><b>от ${rub(m.perM2)}/м²</b></li>
           </ul>
+          <button type="button" class="btn btn-ghost" data-act="anim" data-val="${m.id}" style="width:100%;margin-bottom:8px">Как открывается и устроена</button>
           <a class="btn btn-dark" href="#calc" data-act="pick" data-val="${m.id}" style="width:100%">Посчитать</a>
         </div>`).join("")}
       </div>
     </div>`).join("");
 }
 
+/* ---------- Grille diagram ---------- */
+
+let stopGrilleAnim = null;
+
+function openGrilleAnim(modelId) {
+  const model = byId(MODELS, modelId);
+  stopGrilleAnim = window.GrilleAnim.mount(el("grilleAnim"), model.id, model.name);
+  el("grilleDialog").showModal();
+}
+
+el("grilleDialog").addEventListener("close", () => {
+  if (stopGrilleAnim) stopGrilleAnim();
+  stopGrilleAnim = null;
+});
+
 /* ---------- Calculator events ---------- */
 
 const ACTIONS = {
+  anim: (val) => openGrilleAnim(val),
+  animClose: () => el("grilleDialog").close(),
   mode: (val) => setState({ mode: val }),
   tab: (val) => {
     const i = Number(val);
