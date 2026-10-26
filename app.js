@@ -242,7 +242,7 @@ function renderLock(o) {
 function renderConstruction(o) {
   const model = byId(MODELS, o.model);
   if (model.screen) {
-    el("construction").innerHTML = '<p class="hint" style="margin:0 0 10px">Ширма катится на колёсах: направляющих, порога и поворота нет.</p>';
+    el("construction").innerHTML = '<p class="hint" style="margin:0 0 10px">Ширма катится на одном колесе под крайней стойкой: направляющих, порога и поворота нет.</p>';
     return;
   }
   const swivel = byId(SWIVELS, o.swivel);

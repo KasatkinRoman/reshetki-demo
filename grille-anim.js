@@ -97,10 +97,10 @@
        <rect x="144" y="20" width="16" height="110" fill="#8a9397" stroke="#555d61" stroke-width="2"/>
        <line x1="48" y1="40" x2="152" y2="110" stroke="${ACCENT}" stroke-width="8"/><line x1="152" y1="40" x2="48" y2="110" stroke="${ACCENT}" stroke-width="8"/>`,
       "Стойки — стальная полоса 40×6 мм вместо трубы: её не перекусить и не согнуть ломом."],
-    wheel: ["Колёсные опоры",
+    wheel: ["Колесо на крайней стойке",
       `<rect x="86" y="10" width="28" height="90" ${POST}/><path d="M84 100H116L110 116H90Z" fill="#6f787d"/>
        <circle cx="100" cy="126" r="14" fill="${ACCENT}" stroke="#555d61" stroke-width="2"/><line x1="20" y1="142" x2="180" y2="142" stroke="#555d61" stroke-width="3"/>`,
-      "Ширма катится по полу на колёсах. Её можно отодвинуть в любое место и переставить в другой проём."],
+      "У ширмы одно колесо — под крайней стойкой с ручкой. На нём полотно катится по полу, когда ширму раскрывают и складывают."],
     noRails: ["Без направляющих",
       `<line x1="20" y1="30" x2="180" y2="30" stroke="#c9d0d3" stroke-width="6" stroke-dasharray="10 8"/>
        <line x1="20" y1="130" x2="180" y2="130" stroke="#c9d0d3" stroke-width="6" stroke-dasharray="10 8"/>
@@ -160,7 +160,7 @@
     }
   }
 
-  function drawPost(group, kind, g, uid, pal) {
+  function drawPost(group, kind, g, uid, pal, isEnd) {
     const w = kind.postW;
     if (kind.support === "top") {
       const span = kind.rollers === 2 ? 16 : 8;
@@ -171,7 +171,8 @@
     } else if (kind.support === "bottom") {
       create("rect", { x: -2, y: g.top - 8, width: 4, height: 12, fill: pal.dark }, group);
       create("circle", { cx: 0, cy: g.bot + 13, r: 7, fill: "#e6eaec", stroke: "#555d61" }, group);
-    } else {
+    } else if (isEnd) {
+      // The screen has a single wheel, under the end post with the handle.
       create("path", { d: `M${-w / 2} ${g.bot} H${w / 2} L${w / 2 - 3} ${g.bot + 10} H${-w / 2 + 3}Z`, fill: pal.dark }, group);
       create("circle", { cx: 0, cy: g.bot + 18, r: 9, fill: "#e6eaec", stroke: "#555d61", "stroke-width": 2 }, group);
     }
@@ -201,7 +202,7 @@
         [X0 + s * 2, g.bot + 13, X0 + s * 2 + 130, 350, "Нижний ролик в направляющей"], handle];
     }
     if (kind.support === "wheels") {
-      return [[X0 + s * 2, g.bot + 18, X0 + s * 2 + 120, 350, "Колёсная опора"], rivet, handle];
+      return [[xR, g.bot + 18, Math.max(xR - 140, 200), 360, "Колесо на крайней стойке"], rivet, handle];
     }
     const top = kind.rollers === 2 ? "Каретка с двумя роликами" : "Верхняя направляющая с кареткой";
     return [[X0 + s * 1.5, g.top - 8, X0 + s * 1.5 + 150, 80, top], rivet,
@@ -256,9 +257,9 @@
       bars.push(create("line", { stroke: pal.bars[1], "stroke-width": kind.barW, "stroke-linecap": "round" }, gBars));
       rivets.push(create("circle", { r: kind.decor ? 5 : 3.2, fill: kind.decor ? "#d6b06a" : pal.dark }, gRivets));
     }
-    const posts = Array.from({ length: N }, () => {
+    const posts = Array.from({ length: N }, (_, i) => {
       const group = create("g", {}, gPosts);
-      drawPost(group, kind, g, uid, pal);
+      drawPost(group, kind, g, uid, pal, i === N - 1);
       return group;
     });
     const handle = posts[N - 1];
