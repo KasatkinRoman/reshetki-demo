@@ -240,3 +240,7 @@ dialog.grille-dialog { width: min(920px, calc(100% - 24px)); background: #eceef0
   box-shadow: 0 4px 14px rgba(0,0,0,.18); transition: transform .15s; }
 .model-preview:hover .play { transform: translate(-50%, -50%) scale(1.06); }
 .model-preview:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.calc-anim { margin-top: 12px; background: #eceef0; border-radius: var(--radius-sm); }
+.calc-anim.hg-wrap { padding: 12px; }
+.calc-anim .hg-head { margin-right: 0; }
+.calc-anim .hg-title { font-size: 16px; }

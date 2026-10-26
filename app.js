@@ -199,7 +199,8 @@ function renderModels(o) {
     <button type="button" class="model" aria-pressed="${o.model === m.id}" data-act="model" data-val="${m.id}">
       <b>${m.name}${demoTag(m)}</b><span>${m.tagline}</span><span class="p">${rub(m.perM2)}/м²</span>
     </button>`).join("");
-  el("modelAbout").innerHTML = `<b>${model.name}:</b> ${model.about} <button type="button" class="link-btn" data-act="anim" data-val="${model.id}">Как открывается и устроена →</button>`;
+  el("modelAbout").innerHTML = `<b>${model.name}:</b> ${model.about}`;
+  showCalcAnim(model);
 }
 
 function renderFinish(o) {
@@ -377,6 +378,14 @@ function renderCatalog() {
 /* ---------- Grille diagram ---------- */
 
 let stopGrilleAnim = null;
+let calcAnim = { id: null, stop: null };
+
+/* The calculator shows the selected model's diagram inline; it is rebuilt only when the model changes. */
+function showCalcAnim(model) {
+  if (calcAnim.id === model.id) return;
+  if (calcAnim.stop) calcAnim.stop();
+  calcAnim = { id: model.id, stop: window.GrilleAnim.mount(el("calcAnim"), model.id, model.name) };
+}
 
 function openGrilleAnim(modelId) {
   const model = byId(MODELS, modelId);
