@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Раздвижные решётки — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="demo-bar">Прототип. Название бренда, контакты и часть цен — демо-данные. Оплата и отправка форм не подключены.</div>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#"><span class="logo-mark" aria-hidden="true"></span>РЕШЁТКА·ПРО</a>
+    <nav aria-label="Основное меню">
+      <a href="#calc">Калькулятор</a>
+      <a href="#models">Модели</a>
+      <a href="#how">Как заказать</a>
+      <a href="#feedback">Отправить ТЗ</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <a class="phone" href="tel:+70000000000">+7 (000) 000-00-00</a>
+  </div>
+</header>
+
+<main>
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Раздвижные решётки на&nbsp;заказ. Цена за&nbsp;1&nbsp;минуту</h1>
+      <p class="lead">Знаете размеры — посчитайте и оплатите заказ на сайте. Не знаете — вызовите замерщика, это бесплатно.</p>
+      <a class="btn btn-accent" href="#calc">Рассчитать стоимость</a>
+      <ul class="hero-facts">
+        <li>8 моделей — от дачи до банка</li>
+        <li>Предоплата 70% онлайн</li>
+        <li>Карта, СБП, чек на почту</li>
+      </ul>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 320 220" width="100%"><g id="heroGrille"></g></svg>
+    </div>
+  </div>
+</div>
+
+<section id="calc" aria-labelledby="calcTitle">
+  <div class="wrap">
+    <h2 id="calcTitle">Калькулятор стоимости</h2>
+    <p class="sub">Сначала выберите, как вам удобнее.</p>
+
+    <div class="modes" id="modes" role="group" aria-label="Как заказать"></div>
+
+    <!-- Scenarios «self» and «install»: calculator -->
+    <div class="calc" id="calcPanel">
+      <div class="card">
+        <div class="notice" id="sizeNotice"></div>
+        <div class="tabs" id="tabs" role="tablist" aria-label="Проёмы"></div>
+
+        <div class="step">
+          <div class="step-title"><span class="num">1</span>Размер проёма</div>
+          <div class="row row-3">
+            <label class="field">Ширина, мм<input type="number" id="width" min="300" max="6000" step="1" inputmode="numeric"></label>
+            <label class="field">Высота, мм<input type="number" id="height" min="300" max="4000" step="1" inputmode="numeric"></label>
+            <label class="field">Кол-во одинаковых<input type="number" id="qty" min="1" max="50" step="1" inputmode="numeric"></label>
+          </div>
+          <div class="hint" id="sizeHint"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-title"><span class="num">2</span>Модель</div>
+          <div class="cats chips" id="cats" role="group" aria-label="Назначение"></div>
+          <div class="models" id="models"></div>
+          <div class="model-about" id="modelAbout"></div>
+        </div>
+
+        <div class="step" id="finishStep">
+          <div class="step-title"><span class="num">3</span>Покраска</div>
+          <div id="finish"></div>
+        </div>
+
+        <div class="step" id="lockStep">
+          <div class="step-title"><span class="num">4</span>Замок</div>
+          <div id="lock"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-title"><span class="num">5</span>Конструкция и опции</div>
+          <div id="construction"></div>
+          <div class="opts" id="optsBasic"></div>
+          <details class="more" id="moreBox">
+            <summary>Ещё опции <span id="moreCount"></span></summary>
+            <div class="opts" id="optsMore"></div>
+          </details>
+        </div>
+
+        <div class="step">
+          <div class="step-title"><span class="num">6</span><span id="deliveryTitle">Доставка</span></div>
+          <div class="chips" id="delivery" role="group" aria-label="Доставка"></div>
+          <label class="field" id="kmField" style="margin-top:12px;max-width:220px">Км за МКАД<input type="number" id="km" min="0" max="300" step="1" inputmode="numeric"></label>
+          <div id="installExtras"></div>
+        </div>
+      </div>
+
+      <aside class="card summary" aria-live="polite">
+        <div class="preview"><svg id="preview" viewBox="0 0 220 150" width="100%" height="150" aria-hidden="true"></svg></div>
+        <ul class="lines" id="lines"></ul>
+        <div class="total"><span>Итого</span><b id="total">0 ₽</b></div>
+        <div class="pay-split">
+          <div class="pre"><span>Предоплата 70% онлайн</span><span id="prepay">0 ₽</span></div>
+          <div><span id="restLabel">Остаток 30%</span><span id="rest">0 ₽</span></div>
+        </div>
+        <button class="btn btn-accent" id="toCheckout" type="button">Оформить и оплатить</button>
+        <p class="fine" id="summaryFine"></p>
+      </aside>
+    </div>
+
+    <!-- Scenario «measure»: call a measurer -->
+    <div class="two-col" id="measurePanel" hidden>
+      <div class="card">
+        <h3 style="margin-bottom:8px">Вызвать замерщика</h3>
+        <p class="sub" style="margin-bottom:16px">Перезвоним в течение часа в рабочее время и согласуем день.</p>
+        <form class="form-grid" id="measureForm" novalidate>
+          <label class="field">Имя<input type="text" name="name" autocomplete="name" required></label>
+          <label class="field">Телефон<input type="tel" name="phone" autocomplete="tel" placeholder="+7" required></label>
+          <label class="field">Адрес объекта<input type="text" name="address" autocomplete="street-address" required></label>
+          <label class="field">Что нужно закрыть решётками<textarea name="comment" placeholder="Например: 3 окна на первом этаже и входная дверь в магазин"></textarea></label>
+          <div data-attach></div>
+          <label class="toggle" style="font-size:14px"><input type="checkbox" name="consent"> Согласен на обработку персональных данных</label>
+          <div class="err" role="alert"></div>
+          <button class="btn btn-accent" type="submit">Вызвать замерщика</button>
+          <div class="result" hidden></div>
+        </form>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">Как проходит замер</h3>
+        <ul class="check-list">
+          <li>Замер бесплатный, по Москве и области.</li>
+          <li>Замерщик привезёт образцы и поможет выбрать модель и опции.</li>
+          <li>На месте посчитает точную цену — она фиксируется в договоре.</li>
+          <li>После замера пришлём ссылку на оплату 70% — картой или по СБП.</li>
+          <li>Монтаж — в согласованный день, остаток 30% после монтажа.</li>
+        </ul>
+        <p class="hint" style="margin-top:16px">Ориентировочные цены моделей — в разделе <a href="#models">«Модели»</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="models" style="background:#e9ebed" aria-labelledby="modelsTitle">
+  <div class="wrap">
+    <h2 id="modelsTitle">Модели</h2>
+    <p class="sub">Сгруппировали по назначению — так проще выбрать. Цена за 1 м², окраска в белый RAL 9016 включена.</p>
+    <div id="catalog"></div>
+  </div>
+</section>
+
+<section id="how" aria-labelledby="howTitle">
+  <div class="wrap">
+    <h2 id="howTitle">Три способа заказать</h2>
+    <p class="sub">Выбирайте тот, что подходит вам.</p>
+    <div class="grid-4 steps">
+      <div class="card"><b>Знаю размеры, монтаж не нужен</b><p class="sub" style="margin:6px 0 0">Считаете цену, оплачиваете 70% на сайте. Изготовим по вашим размерам, остаток — при получении.</p></div>
+      <div class="card"><b>Знаю размеры, нужен монтаж</b><p class="sub" style="margin:6px 0 0">То же, плюс монтаж. За точность размеров отвечаете вы — замерщик не приезжает.</p></div>
+      <div class="card"><b>Не знаю размеров</b><p class="sub" style="margin:6px 0 0">Вызываете замерщика бесплатно. Он считает цену на месте, после этого — оплата 70%.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0" aria-labelledby="compareTitle">
+  <div class="wrap">
+    <h2 id="compareTitle">Чем мы удобнее</h2>
+    <p class="sub">Сравнили с сайтами других производителей раздвижных решёток (октябрь 2026).</p>
+    <div class="table-scroll">
+      <table class="compare">
+        <thead><tr><th></th><th>Мы</th><th>Обычно у других</th></tr></thead>
+        <tbody>
+          <tr><td>Цена с опциями, монтажом и доставкой</td><td class="yes">Сразу в калькуляторе</td><td>«от … ₽/м²», остальное по звонку</td></tr>
+          <tr><td>Несколько проёмов в одном расчёте</td><td class="yes">Да</td><td>Чаще нет</td></tr>
+          <tr><td>Онлайн-оплата</td><td class="yes">Карта, СБП, чек на почту</td><td>Чаще только по счёту</td></tr>
+          <tr><td>Отправить ТЗ или проект</td><td class="yes">Прямо в форме, до 5 файлов</td><td>Только по почте</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="feedback" style="background:#e9ebed" aria-labelledby="feedbackTitle">
+  <div class="wrap two-col">
+    <div>
+      <h2 id="feedbackTitle">Есть ТЗ, проект или фото проёма?</h2>
+      <p class="sub">Прикрепите файлы — посчитаем стоимость и пришлём коммерческое предложение. Подходит для компаний, тендеров и нестандартных проёмов.</p>
+      <ul class="check-list">
+        <li>PDF, Word, Excel, DWG, фото, ZIP</li>
+        <li>До 5 файлов, всего до 20 МБ</li>
+        <li>Ответ — в течение рабочего дня</li>
+      </ul>
+    </div>
+    <div class="card">
+      <form class="form-grid" id="feedbackForm" novalidate>
+        <label class="field">Имя или компания<input type="text" name="name" autocomplete="organization" required></label>
+        <div class="row">
+          <label class="field">Телефон<input type="tel" name="phone" autocomplete="tel" placeholder="+7"></label>
+          <label class="field">Почта<input type="email" name="email" autocomplete="email"></label>
+        </div>
+        <label class="field">Сообщение<textarea name="comment" placeholder="Что нужно сделать, сроки, адрес объекта"></textarea></label>
+        <div data-attach></div>
+        <label class="toggle" style="font-size:14px"><input type="checkbox" name="consent"> Согласен на обработку персональных данных</label>
+        <div class="err" role="alert"></div>
+        <button class="btn btn-dark" type="submit">Отправить</button>
+        <div class="result" hidden></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="faq" aria-labelledby="faqTitle">
+  <div class="wrap">
+    <h2 id="faqTitle">Частые вопросы</h2>
+    <details class="faq"><summary>Как правильно снять размеры?</summary><p>Ширину и высоту проёма меряйте в трёх местах и берите наименьшее значение, в миллиметрах. Если сомневаетесь — вызовите замерщика, это бесплатно.</p></details>
+    <details class="faq"><summary>Кто отвечает за размеры, если я указал их сам?</summary><p>Вы. Мы изготавливаем решётку точно по вашим размерам. Если она не подойдёт из-за ошибки в размерах, переделка оплачивается отдельно. Чтобы этого избежать, закажите бесплатный замер.</p></details>
+    <details class="faq"><summary>Сколько места займёт решётка в сложенном виде?</summary><p>Примерно 15–20% ширины проёма. Калькулятор показывает это для ваших размеров.</p></details>
+    <details class="faq"><summary>Почему для низких решёток цена выше?</summary><p>Для проёмов ниже 1200 мм действует наценка 30%: механизм тот же, а площадь меньше.</p></details>
+    <details class="faq"><summary>Можно ли оплатить по счёту от юрлица?</summary><p>Да. Отправьте реквизиты через форму «Отправить ТЗ» — выставим счёт.</p></details>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b style="color:#fff">РЕШЁТКА·ПРО</b><br>ИП Касаткин · ИНН — · ОГРНИП —</div>
+    <div>Москва и Московская область<br>Пн–Пт 9–19, Сб 10–16</div>
+    <div><a href="#">Публичная оферта</a><br><a href="#">Политика обработки персональных данных</a></div>
+  </div>
+</footer>
+
+<div class="mobile-total" id="mobileTotal" aria-hidden="true">
+  <div><small>Итого · предоплата <span id="mPrepay"></span></small><b id="mTotal">0 ₽</b></div>
+  <button class="btn btn-accent" type="button" id="mCheckout">Оформить</button>
+</div>
+
+<dialog id="checkout" aria-labelledby="dlgTitle">
+  <form class="dlg" id="checkoutForm" novalidate>
+    <h3 id="dlgTitle">Оформление заказа</h3>
+    <p class="sub" id="dlgSum"></p>
+    <label class="field">Имя<input type="text" name="name" autocomplete="name" required></label>
+    <div class="row">
+      <label class="field">Телефон<input type="tel" name="phone" autocomplete="tel" placeholder="+7" required></label>
+      <label class="field">Почта для чека<input type="email" name="email" autocomplete="email" required></label>
+    </div>
+    <label class="field" id="addrField">Адрес<input type="text" name="address" autocomplete="street-address"></label>
+    <label class="field">Комментарий<textarea name="comment" style="min-height:60px"></textarea></label>
+    <div data-attach></div>
+    <label class="toggle" style="font-size:14px;align-items:flex-start"><input type="checkbox" name="sizes">
+      <span>Размеры снял(а) я сам(а) и отвечаю за их точность. Решётку изготовят по этим размерам; переделка из-за ошибки в размерах оплачивается отдельно.</span></label>
+    <label class="toggle" style="font-size:14px"><input type="checkbox" name="consent"> Согласен с офертой и обработкой персональных данных</label>
+    <div class="err" role="alert"></div>
+    <div class="actions">
+      <button class="btn btn-accent" type="submit" data-flow="pay" id="payBtn">Оплатить 70% через ЮKassa</button>
+      <button class="btn btn-ghost" type="button" data-flow="close">Вернуться к расчёту</button>
+    </div>
+    <div class="result" hidden></div>
+  </form>
+</dialog>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
