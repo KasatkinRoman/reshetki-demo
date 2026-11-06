@@ -1,6 +1,6 @@
 /*
  * Welded grilles: pure pricing functions (no DOM, inputs are never mutated).
- * All prices come from WELD in data.js (base, opening, paint, install and delivery are the owner's prices).
+ * All prices come from WELD in data.js (owner's prices). Delivery is one per order (calc-order.js).
  *
  * Per opening:
  *   area     = max(minAreaM2, w × h)
@@ -75,16 +75,20 @@
     };
   }
 
-  const KEYS = ["qty", "area", "frame", "pattern", "opening", "topUp", "product", "paint", "hardware", "install"];
-
-  /** Whole order; `order` = { openings, mode, delivery, km }. */
-  function calcWeld(order) {
-    const items = order.openings.map((o) => priceWeldOpening(o, order.mode));
-    const sums = Object.fromEntries(KEYS.map((k) => [k, items.reduce((s, it) => s + it[k], 0)]));
-    const delivery = C.deliveryPrice(order.mode, order.delivery, order.km, W.delivery);
-    const total = sums.product + sums.paint + sums.hardware + sums.install + delivery;
-    return { items, ...sums, pieces: sums.qty, delivery, total, ...C.paymentSplit(total) };
+  /** One order position: the breakdown plus its subtotal (without delivery). */
+  function priceWeldPosition(o, mode) {
+    const p = priceWeldOpening(o, mode);
+    return { ...p, subtotal: p.product + p.paint + p.hardware + p.install };
   }
 
-  return { newWeldOpening, hasSash, normalizeWeldOpening, pricedWidth, pricedHeight, hatchFits, priceWeldOpening, calcWeld };
+  const KEYS = ["qty", "area", "frame", "pattern", "opening", "topUp", "product", "paint", "hardware", "install", "subtotal"];
+
+  /** Sums for a group of welded openings in one mode; `order` = { openings, mode }. No delivery. */
+  function calcWeld({ openings, mode }) {
+    const items = openings.map((o) => priceWeldPosition(o, mode));
+    const sums = Object.fromEntries(KEYS.map((k) => [k, items.reduce((s, it) => s + it[k], 0)]));
+    return { items, ...sums, pieces: sums.qty };
+  }
+
+  return { newWeldOpening, hasSash, normalizeWeldOpening, pricedWidth, pricedHeight, hatchFits, priceWeldOpening, priceWeldPosition, calcWeld };
 });

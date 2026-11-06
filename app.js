@@ -1,14 +1,19 @@
 /* Home page glue: hero entry cards and the «Что вам нужно?» advisor.
- * Calculators live in app-sliding.js and app-weld.js. */
+ * Both only open or add positions in the shared order (order-ui.js). */
 (function () {
   const { el, esc } = window.UI;
   const { QUESTIONS, recommend } = window.Advisor;
   const HERO_PREVIEW_COLOR = "#f2a516";
 
-  el("heroSliding").innerHTML = `<svg viewBox="0 0 220 150" aria-hidden="true">${window.SlidingUI.grilleSvg(1600, 1200, 220, 150, HERO_PREVIEW_COLOR)}</svg>`;
-  el("safetyScheme").innerHTML = window.WeldAnim.scheme({ type: "hatch", pattern: "grid" })
-    + '<p class="hint">Люк-створка в глухой решётке: нажмите «Открыть».</p>';
+  el("heroSliding").innerHTML = `<svg viewBox="0 0 220 150" aria-hidden="true">${window.SlidingEditor.grilleSvg(1600, 1200, 220, 150, HERO_PREVIEW_COLOR)}</svg>`;
   el("heroWeld").innerHTML = window.WeldAnim.svg({ type: "double", pattern: "diamond", decorative: true });
+
+  document.querySelectorAll("[data-entry]").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.OrderUI.enter(link.dataset.entry);
+    });
+  });
 
   let answers = {};
 
@@ -27,16 +32,6 @@
       : '<p class="adv-wait">Ответьте на три вопроса — подскажем тип решётки и вариант открывания.</p>';
   }
 
-  function go(target) {
-    if (target.kind === "sliding") {
-      window.SlidingUI.pick(null, target.cat);
-      el("calc").scrollIntoView({ behavior: "smooth" });
-    } else {
-      window.WeldUI.pickType(target.type);
-      el("wcalc").scrollIntoView({ behavior: "smooth" });
-    }
-  }
-
   el("advisor").addEventListener("click", (e) => {
     const answer = e.target.closest("[data-q]");
     if (answer) {
@@ -47,7 +42,7 @@
       el("advisorQuestions").querySelector(`[data-q="${q}"][data-a="${a}"]`).focus();
       return;
     }
-    if (e.target.closest("[data-go]")) go(recommend(answers).target);
+    if (e.target.closest("[data-go]")) window.OrderUI.advise(recommend(answers).target);
   });
 
   renderAdvisor();

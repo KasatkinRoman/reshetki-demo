@@ -1,6 +1,7 @@
 /*
  * Sliding grilles: pure pricing functions (no DOM, no state mutation).
  * Logic moved unchanged from the v1 app.js; tests/calc.test.js guards the old results.
+ * Delivery is not part of a position: one delivery per order is added in calc-order.js.
  */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./calc-common.js"));
@@ -77,21 +78,24 @@
     return { qty, area: area * qty, product: product * qty, extras: extras * qty, install: install * qty };
   }
 
-  /** Order totals for a list of openings; `order` = { openings, mode, delivery, km }. */
-  function totals(order) {
-    const items = order.openings.map((o) => priceOpening(normalizeOpening(o), order.mode));
-    const sum = (key) => items.reduce((s, it) => s + it[key], 0);
-    const delivery = C.deliveryPrice(order.mode, order.delivery, order.km);
-    const total = sum("product") + sum("extras") + sum("install") + delivery;
-    return {
-      pieces: sum("qty"), area: sum("area"), product: sum("product"), extras: sum("extras"), install: sum("install"),
-      delivery, total, ...C.paymentSplit(total),
-      lowHeight: order.openings.some(isLowHeight),
-    };
+  /** One order position: the price breakdown plus its subtotal (no delivery — it is one per order). */
+  function pricePosition(o, mode) {
+    const n = normalizeOpening(o);
+    const p = priceOpening(n, mode);
+    return { ...p, subtotal: p.product + p.extras + p.install, lowHeight: isLowHeight(n) };
+  }
+
+  const SUM_KEYS = ["qty", "area", "product", "extras", "install", "subtotal"];
+
+  /** Sums for a group of sliding openings in one mode; delivery is added by calc-order.js. */
+  function totals({ openings, mode }) {
+    const items = openings.map((o) => pricePosition(o, mode));
+    const sums = Object.fromEntries(SUM_KEYS.map((k) => [k, items.reduce((s, it) => s + it[k], 0)]));
+    return { ...sums, pieces: sums.qty, lowHeight: items.some((it) => it.lowHeight) };
   }
 
   return {
     newOpening, allowedLocks, optionAllowed, normalizeOpening,
-    pricedWidth, pricedHeight, isLowHeight, priceOpening, totals,
+    pricedWidth, pricedHeight, isLowHeight, priceOpening, pricePosition, totals,
   };
 });

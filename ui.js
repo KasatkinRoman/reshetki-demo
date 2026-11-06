@@ -1,6 +1,6 @@
 /*
  * Shared UI helpers: formatting, chips, file attachments, form validation, the ordering-mode
- * picker, the measurer form, checkout dialog and the sticky mobile total.
+ * picker, the measurer form, checkout dialog, the diagram dialog and the sticky mobile total.
  * Nothing is sent anywhere: forms only show what the production version would do.
  */
 (function () {
@@ -16,7 +16,7 @@
     { id: "measure", name: "Не знаю размеров", note: "Бесплатный замер — точную цену посчитает замерщик.", pay: "Оплата после замера" },
   ];
 
-  const rub = (n) => new Intl.NumberFormat("ru-RU").format(Math.round(n)) + " ₽";
+  const rub = (n) => new Intl.NumberFormat("ru-RU").format(Math.round(n)) + "\u00a0₽"; // no-break space before ₽
   const el = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const demoTag = (item) => (item && item.source === "competitor" ? '<span class="demo-tag" title="Демо-цена: ориентир по конкурентам">демо</span>' : "");
@@ -45,12 +45,14 @@
       </button>`).join("");
   }
 
-  /** Delegated clicks on [data-act] inside `root`, dispatched to `actions[act](val, delta)`. */
+  /** Delegated clicks on [data-act] inside `root`, dispatched to `action(val, delta)`.
+   * `actions` is an object of handlers or a function `act → handler | null`. */
   function delegate(root, actions) {
+    const find = typeof actions === "function" ? actions : (act) => actions[act];
     root.addEventListener("click", (e) => {
       const target = e.target.closest("[data-act]");
       if (!target || target.disabled || !root.contains(target)) return;
-      const action = actions[target.dataset.act];
+      const action = find(target.dataset.act);
       if (!action) return;
       if (target.tagName !== "A") e.preventDefault();
       if (target.dataset.act === "remove") e.stopPropagation();
@@ -149,7 +151,7 @@
   const needConsent = (form) => (checked(form, "consent") ? "" : "Нужно согласие на обработку персональных данных.");
   const filesNote = (files) => (files.length ? ` Файлов прикреплено: ${files.length}.` : "");
 
-  /** Builds the «call a measurer» panel into `container` (one per calculator). */
+  /** Builds the «call a measurer» panel into `container`. */
   function mountMeasurePanel(container, prefix, placeholder) {
     container.innerHTML = `
       <div class="card">
@@ -183,11 +185,11 @@
       (f, files) => `<b>Заявка на замер принята</b><span class="hint">Перезвоним в течение часа в рабочее время.${filesNote(files)}</span>`);
   }
 
-  /* ---------- Checkout (shared by both calculators) ----------
+  /* ---------- Checkout (one for the whole order) ----------
    * Production version creates a YooKassa payment for the prepayment on the server and
    * redirects to its confirmation_url; the order and files go to the sales inbox. */
 
-  let order = null; // snapshot of the order being paid: { title, total, prepay, rest, pieces, mode, needsAddress }
+  let order = null; // snapshot of the order being paid: { title, positions, total, prepay, rest, pieces, mode, needsAddress }
   const dlg = el("checkout");
   const checkoutForm = el("checkoutForm");
   const checkout = bindForm(checkoutForm, [
@@ -202,7 +204,7 @@
 
   function openCheckout(summary) {
     order = summary;
-    el("dlgSum").textContent = `${summary.title}: ${summary.pieces} шт. на ${rub(summary.total)}. Сейчас оплачиваете ${rub(summary.prepay)}, `
+    el("dlgSum").textContent = `${summary.title}: позиций ${summary.positions}, ${summary.pieces} шт. на ${rub(summary.total)}. Сейчас оплачиваете ${rub(summary.prepay)}, `
       + (summary.mode === "install" ? `${rub(summary.rest)} — после монтажа.` : `${rub(summary.rest)} — при получении.`);
     el("addrField").hidden = !summary.needsAddress;
     el("payBtn").textContent = `Оплатить ${rub(summary.prepay)} через ЮKassa`;
@@ -219,14 +221,13 @@
   ], (form, files) => `<b>Отправлено</b><span class="hint">Посчитаем и пришлём КП в течение рабочего дня.${filesNote(files)}</span>`);
 
   /* ---------- Sticky mobile total ----------
-   * Each calculator registers its section and a getter returning its checkout summary
-   * (or null in the «measure» mode). The bar shows the calculator currently on screen. */
+   * The order calculator registers its section and a getter returning its checkout summary
+   * (or null in the «measure» mode / for an empty order). The bar shows while the section is on screen. */
 
-  const sources = [];
-  let current = null;
+  let source = null;
 
   function refreshMobileTotal() {
-    const summary = current && current.get();
+    const summary = source && source.visible && source.get();
     el("mobileTotal").hidden = !summary;
     document.body.classList.toggle("has-total", Boolean(summary));
     if (!summary) return;
@@ -236,26 +237,42 @@
   }
 
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      const source = sources.find((s) => s.section === entry.target);
-      if (source) source.visible = entry.isIntersecting;
-    });
-    current = sources.find((s) => s.visible) || null;
+    entries.forEach((entry) => { if (source && entry.target === source.section) source = { ...source, visible: entry.isIntersecting }; });
     refreshMobileTotal();
   });
 
   function registerTotal(section, get) {
-    sources.push({ section, get, visible: false });
+    source = { section, get, visible: false };
     observer.observe(section);
   }
 
   el("mCheckout").addEventListener("click", () => {
-    const summary = current && current.get();
+    const summary = source && source.get();
     if (summary) openCheckout(summary);
   });
 
+  /* ---------- Diagram dialog («Как устроено») ----------
+   * `draw(root)` fills the dialog body and may return a function that stops its animation. */
+
+  const diagram = el("grilleDialog");
+  let stopDiagram = null;
+
+  function openDiagram(draw) {
+    const root = el("grilleAnim");
+    root.className = "";
+    stopDiagram = draw(root) || null;
+    diagram.showModal();
+  }
+
+  diagram.addEventListener("close", () => {
+    if (stopDiagram) stopDiagram();
+    stopDiagram = null;
+    el("grilleAnim").innerHTML = "";
+  });
+  diagram.querySelector(".dlg-close").addEventListener("click", () => diagram.close());
+
   window.UI = {
     MODES, rub, el, esc, demoTag, chip, stepper, syncInput, readInt, modesHtml, delegate,
-    mountMeasurePanel, openCheckout, registerTotal, refreshMobileTotal,
+    mountMeasurePanel, openCheckout, registerTotal, refreshMobileTotal, openDiagram,
   };
 })();

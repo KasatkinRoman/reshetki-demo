@@ -5,6 +5,7 @@ const SCISSOR_ROWS = 2;
  * Catalog and prices for the calculator (RUB).
  * Source tags:
  *   "price-list" — our selling prices from the price workbook of 2026-10-22;
+ *   "owner"      — prices set by the owner (welded grilles, delivery; 2026-11-06);
  *   "competitor" — DEMO placeholder copied from amra-m.ru (prices without VAT, 2026-10-26),
  *                  to be replaced with our own prices before launch.
  */
@@ -126,11 +127,15 @@ const PRICING = {
   maxQty: 50,
 };
 
-/* DEMO delivery (competitor-like). perKm applies outside the MKAD. */
+/*
+ * One delivery for the whole order, the same for every grille type (owner, 2026-11-06).
+ * No free delivery with installation. perKm applies outside the MKAD.
+ * Carrier price is still a DEMO placeholder (competitor level).
+ */
 const DELIVERY = [
-  { id: "moscow", name: "По Москве", price: 2000, freeWithInstall: true },
-  { id: "region", name: "За МКАД", price: 2000, perKm: 80 },
-  { id: "carrier", name: "До транспортной компании", price: 400, noInstall: true },
+  { id: "moscow", name: "По Москве", price: 5000 },
+  { id: "region", name: "За МКАД", price: 5000, perKm: 80 },
+  { id: "carrier", name: "До транспортной компании", price: 400, noInstall: true, source: "competitor" },
   { id: "pickup", name: "Самовывоз", price: 0, noInstall: true },
 ];
 const MAX_KM = 300;
@@ -142,11 +147,10 @@ const ATTACHMENTS = {
 };
 
 /*
- * Welded (fixed-frame) grilles. ALL numbers here are DEMO placeholders based on
- * competitor price levels (source: "competitor"); replace with our own prices before launch.
+ * Welded (fixed-frame) grilles. All prices are the owner's (2026-11-06), source: "owner".
+ * Delivery is shared with sliding grilles (DELIVERY above).
  */
 const WELD = {
-  /* Owner prices (2026-11-06): base per m², flat opening price per grille, paint per m², install per m². */
   basePerM2: 5500,
   openings: [
     {
@@ -177,9 +181,9 @@ const WELD = {
     { id: "right", name: "Петли справа" },
   ],
   patterns: [
-    { id: "grid", name: "Простая сетка из прутка", hint: "пруток 12 мм, ячейка ~150 мм", perM2: 0, source: "competitor" },
-    { id: "diamond", name: "Рамка с диагональю / ромбом", hint: "рамка и ромбическое заполнение", perM2: 600, source: "competitor" },
-    { id: "forged", name: "С элементами ковки", hint: "завитки, пики, корзинки", perM2: 2500, source: "competitor" },
+    { id: "grid", name: "Простая сетка из прутка", hint: "пруток 12 мм, ячейка ~150 мм", perM2: 0, source: "owner" },
+    { id: "diamond", name: "Рамка с диагональю / ромбом", hint: "рамка и ромбическое заполнение", perM2: 600, source: "owner" },
+    { id: "forged", name: "С элементами ковки", hint: "завитки, пики, корзинки", perM2: 2500, source: "owner" },
   ],
   mounts: [
     { id: "inside", name: "В проём", hint: "решётка внутри откосов, анкеры в стены проёма" },
@@ -187,8 +191,8 @@ const WELD = {
   ],
   locks: [
     { id: "none", name: "Без замка", price: 0 },
-    { id: "mortise", name: "Врезной замок", price: 3900, source: "competitor" },
-    { id: "rim", name: "Ригельный замок", price: 7900, source: "competitor" },
+    { id: "mortise", name: "Врезной замок", price: 3900, source: "owner" },
+    { id: "rim", name: "Ригельный замок", price: 7900, source: "owner" },
   ],
   eyelets: { name: "Проушины под навесной замок", price: 1000, source: "price-list" },
   finishes: [
@@ -198,13 +202,6 @@ const WELD = {
   ],
   installPerM2: 3000,
   minProductPrice: 8000,
-  /* Own delivery for bulky welded grilles; carrier and pickup stay as in the sliding catalog (DEMO). */
-  delivery: [
-    { id: "moscow", name: "По Москве", price: 5000 },
-    { id: "region", name: "За МКАД", price: 5000, perKm: 80 },
-    { id: "carrier", name: "До транспортной компании", price: 400, noInstall: true, source: "competitor" },
-    { id: "pickup", name: "Самовывоз", price: 0, noInstall: true },
-  ],
   minAreaM2: 1,
   minSizeMm: 300,
   maxWidthMm: 4000,
