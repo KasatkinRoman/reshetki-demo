@@ -1,0 +1,136 @@
+/* v2: hero entry cards, advisor, welded grilles configurator and schemes, info blocks.
+ * Extends styles.css (same tokens: graphite + amber «metal»). */
+:root {
+  --tint: #e9ebed;
+  --glass: #cfdde6;
+  --warn-ink: #8a5a00;
+  --scheme-max-h: 220px;
+  --scheme-sm-max-h: 96px;
+  --swing-ms: 700ms;
+}
+
+.skip { position: absolute; left: 8px; top: -60px; z-index: 50; background: var(--accent); color: var(--accent-ink);
+  padding: 10px 14px; border-radius: 8px; font-weight: 600; }
+.skip:focus { top: 8px; }
+.tinted { background: var(--tint); }
+section { scroll-margin-top: 64px; }
+.kicker { margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--warn-ink); }
+.block-title { font-size: 20px; margin: 8px 0 12px; }
+.card-title { font-size: 18px; margin: 12px 0 0; }
+.demo-note { font-size: 12px; color: var(--warn-ink); margin: 4px 0 0; }
+.lead-dark { font-size: 18px; font-weight: 600; margin: 0 0 18px; max-width: 34em; }
+
+/* ---------- Hero ---------- */
+.hero { padding: 40px 0 48px; }
+.hero .wrap.hero-v2 { grid-template-columns: 1.15fr .85fr; align-items: start; }
+.hero-v2 h1 { font-size: clamp(28px, 4vw, 46px); }
+.hero-v2 .lead { font-size: 17px; margin-bottom: 20px; }
+.entry-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.entry { display: grid; gap: 4px; align-content: start; text-decoration: none; color: #fff; padding: 14px;
+  border: 1.5px solid rgba(255,255,255,.18); border-radius: var(--radius); background: rgba(255,255,255,.05);
+  transition: border-color .15s, background .15s, transform .15s; }
+.entry:hover { border-color: var(--accent); background: rgba(255,255,255,.09); transform: translateY(-2px); }
+.entry b { font-size: 20px; }
+.entry b::after { content: " →"; color: var(--accent); }
+.entry > span:last-child { font-size: 14px; opacity: .85; }
+.entry-art { display: grid; place-items: center; height: 100px; margin-bottom: 6px; border-radius: var(--radius-sm); background: rgba(0,0,0,.18); overflow: hidden; }
+.entry-art svg { max-height: 92px; width: auto; max-width: 100%; display: block; }
+.entry-art .ws-svg { border-radius: 6px; }
+
+.card-dark { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.14); border-radius: var(--radius); padding: 20px; }
+.adv-title { font-size: 22px; margin: 0 0 8px; color: #fff; }
+.adv-q { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
+.adv-q legend { font-size: 15px; font-weight: 600; margin-bottom: 8px; padding: 0; }
+.chip-dark { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
+.chip-dark:hover { border-color: var(--accent); }
+.chip-dark[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.adv-result { margin-top: 6px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.14); }
+.adv-result b { font-size: 17px; display: block; }
+.adv-result p { margin: 4px 0 12px; font-size: 15px; opacity: .9; }
+.adv-wait { font-size: 14px; opacity: .85; margin: 0; }
+@media (max-width: 860px) {
+  .hero .wrap.hero-v2 { grid-template-columns: 1fr; gap: 24px; }
+}
+@media (max-width: 420px) {
+  .entry { padding: 10px; }
+  .entry b { font-size: 17px; }
+  .entry-art { height: 80px; }
+  .entry-art svg { max-height: 72px; }
+}
+
+/* ---------- Welded configurator ---------- */
+.type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.pattern-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 640px) { .type-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .pattern-grid { grid-template-columns: 1fr; } }
+.type-card, .pattern-card { display: grid; gap: 2px; align-content: start; text-align: left; font: inherit; color: inherit; cursor: pointer;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px; min-height: 44px; }
+.type-card:hover, .pattern-card:hover { border-color: var(--steel-2); }
+.type-card[aria-pressed="true"], .pattern-card[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
+.type-card .ws-svg { height: var(--scheme-sm-max-h); width: auto; margin: 0 auto 6px; display: block; }
+.type-card > span, .pattern-card > span { font-size: 13px; color: var(--muted); }
+.type-card .p, .pattern-card .p { color: var(--ink); font-weight: 600; margin-top: 4px; }
+.pattern-card .ws-pattern { width: 100%; max-width: 160px; height: auto; max-height: 90px; display: block; margin-bottom: 6px; border-radius: 6px; }
+@media (max-width: 520px) {
+  .pattern-card { grid-template-columns: 96px 1fr; column-gap: 12px; }
+  .pattern-card .ws-pattern { grid-row: span 3; margin: 0; }
+}
+.weld-stage { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; margin-top: 12px;
+  background: #eceef0; border-radius: var(--radius-sm); padding: 12px; }
+.weld-stage .model-about { margin: 0; background: #fff; }
+@media (max-width: 520px) { .weld-stage { grid-template-columns: 1fr; } }
+.preview-weld .ws-svg { height: 150px; width: auto; display: block; }
+.lines li.sub-line { padding-left: 12px; font-size: 13px; }
+
+/* ---------- Weld schemes (weld-anim.js) ---------- */
+.weld-scheme { display: grid; justify-items: center; gap: 10px; }
+.weld-scheme .ws-svg { height: var(--scheme-max-h); width: auto; max-width: 100%; display: block; border-radius: 8px; }
+.ws-sm .ws-svg { height: var(--scheme-sm-max-h); }
+.ws-toggle { min-height: 44px; min-width: 120px; color: var(--ink); border-color: var(--steel-2); }
+.ws-toggle[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.ws-fixed { margin: 0; min-height: 44px; display: flex; align-items: center; font-size: 14px; color: var(--muted); }
+.ws-sash { transform-box: fill-box; transition: transform var(--swing-ms) cubic-bezier(.4, 0, .2, 1); }
+.ws-hinge-left { transform-origin: left center; }
+.ws-hinge-right { transform-origin: right center; }
+.weld-scheme.is-open .ws-hinge-left { transform: scaleX(.22) skewY(-9deg); }
+.weld-scheme.is-open .ws-hinge-right { transform: scaleX(.22) skewY(9deg); }
+.ws-arrows { transition: opacity calc(var(--swing-ms) / 2); }
+.weld-scheme.is-open .ws-arrows { opacity: 0; }
+
+/* ---------- Weld catalog ---------- */
+.weld-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.weld-card p { font-size: 14px; color: var(--muted); margin: 8px 0 0; }
+.weld-card .price { color: var(--ink); font-weight: 700; font-size: 16px; }
+.weld-card { display: flex; flex-direction: column; }
+.weld-card .btn { margin-top: auto; }
+.weld-card .demo-note { margin-bottom: 14px; }
+
+/* ---------- Sliding: video placeholder ---------- */
+.video-stub { aspect-ratio: 16 / 9; max-width: 720px; border-radius: var(--radius); background: var(--steel);
+  color: #fff; display: grid; place-content: center; justify-items: center; gap: 6px; text-align: center; padding: 16px; }
+.video-stub span:not(.video-play) { font-size: 20px; font-weight: 700; }
+.video-stub small { opacity: .8; font-size: 14px; }
+.video-play { width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+  display: grid; place-items: center; font-size: 22px; }
+
+/* ---------- Info blocks ---------- */
+.terms h3 { margin-bottom: 12px; }
+.terms-row { display: flex; gap: 14px; align-items: baseline; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+.terms-row b { font-size: 28px; font-weight: 800; min-width: 3.6em; }
+.safety-art { display: grid; justify-items: center; }
+.compare th[scope="row"] { font-weight: 600; background: none; }
+.table-scroll:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- Mobile: compact and readable ---------- */
+@media (max-width: 520px) {
+  section { padding: 44px 0; }
+  .card { padding: 16px; }
+  .compare { font-size: 14px; }
+  .compare th, .compare td { padding: 10px; }
+  .weld-scheme .ws-svg { height: 180px; }
+  .terms-row b { font-size: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}

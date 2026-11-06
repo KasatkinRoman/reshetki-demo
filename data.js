@@ -140,3 +140,82 @@ const ATTACHMENTS = {
   maxTotalMb: 20,
   accept: ".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.heic,.dwg,.zip",
 };
+
+/*
+ * Welded (fixed-frame) grilles. ALL numbers here are DEMO placeholders based on
+ * competitor price levels (source: "competitor"); replace with our own prices before launch.
+ */
+const WELD = {
+  /* Owner prices (2026-11-06): base per m², flat opening price per grille, paint per m², install per m². */
+  basePerM2: 5500,
+  openings: [
+    {
+      id: "blind", name: "Глухая", short: "не открывается", openPrice: 0, sashes: 0,
+      fits: "Окна, которые не нужно открывать: подвалы, склады, задние фасады.",
+      about: "Цельная решётка без створок. Самая прочная и доступная, но через неё нельзя выйти.",
+    },
+    {
+      id: "single", name: "Одна створка", short: "петли слева или справа", openPrice: 4000, sashes: 1, hingeChoice: true,
+      fits: "Окна до ~1 м шириной, балконы, двери-калитки, когда нужен выход или доступ к окну.",
+      about: "Решётка целиком открывается как дверь. Сторону петель выбираете сами.",
+    },
+    {
+      id: "double", name: "Две створки", short: "открываются от центра", openPrice: 8000, sashes: 2,
+      fits: "Широкие окна и проёмы от ~1,2 м, витрины, ворота-распашки.",
+      about: "Две створки расходятся от центра — каждая уже и легче, им нужно меньше места при открывании.",
+    },
+    {
+      id: "hatch", name: "Люк-створка", short: "дверца в глухой решётке", openPrice: 4000, sashes: 1,
+      fits: "Первые этажи и квартиры, где нужна прочная глухая решётка и запасной выход.",
+      about: "Глухая решётка со встроенной небольшой дверцей: в обычной жизни закрыто, при необходимости можно выбраться.",
+    },
+  ],
+  /* Default hatch size; the real size is agreed at the measurement visit. */
+  hatch: { widthMm: 600, heightMm: 800, marginMm: 100 },
+  hinges: [
+    { id: "left", name: "Петли слева" },
+    { id: "right", name: "Петли справа" },
+  ],
+  patterns: [
+    { id: "grid", name: "Простая сетка из прутка", hint: "пруток 12 мм, ячейка ~150 мм", perM2: 0, source: "competitor" },
+    { id: "diamond", name: "Рамка с диагональю / ромбом", hint: "рамка и ромбическое заполнение", perM2: 600, source: "competitor" },
+    { id: "forged", name: "С элементами ковки", hint: "завитки, пики, корзинки", perM2: 2500, source: "competitor" },
+  ],
+  mounts: [
+    { id: "inside", name: "В проём", hint: "решётка внутри откосов, анкеры в стены проёма" },
+    { id: "overlay", name: "Внакладку", hint: "решётка перекрывает проём и крепится к фасаду — для узких или неровных откосов" },
+  ],
+  locks: [
+    { id: "none", name: "Без замка", price: 0 },
+    { id: "mortise", name: "Врезной замок", price: 3900, source: "competitor" },
+    { id: "rim", name: "Ригельный замок", price: 7900, source: "competitor" },
+  ],
+  eyelets: { name: "Проушины под навесной замок", price: 1000, source: "price-list" },
+  finishes: [
+    { id: "enamel", name: "Грунт-эмаль", hint: "стандартная покраска в два слоя", perM2: 1000 },
+    { id: "zinc", name: "Цинко-грунт", hint: "цинконаполненный грунт: лучше защищает от ржавчины", perM2: 1500 },
+    { id: "powder", name: "Порошковая покраска", hint: "прочнее и ровнее", perM2: 2500 },
+  ],
+  installPerM2: 3000,
+  minProductPrice: 8000,
+  /* Own delivery for bulky welded grilles; carrier and pickup stay as in the sliding catalog (DEMO). */
+  delivery: [
+    { id: "moscow", name: "По Москве", price: 5000 },
+    { id: "region", name: "За МКАД", price: 5000, perKm: 80 },
+    { id: "carrier", name: "До транспортной компании", price: 400, noInstall: true, source: "competitor" },
+    { id: "pickup", name: "Самовывоз", price: 0, noInstall: true },
+  ],
+  minAreaM2: 1,
+  minSizeMm: 300,
+  maxWidthMm: 4000,
+  maxHeightMm: 3000,
+  maxQty: 50,
+};
+
+/* One namespace for the calculators: global in the browser, module.exports in Node (tests). */
+const GRILLE_DATA = {
+  SCISSOR_ROWS, CATEGORIES, MODELS, FINISHES, ZINC_PER_M2, PATINAS, LOCKS, MASTER_KEY_PER_LOCK, EXTRA_BOLTS_PAIR,
+  OPTIONS, THRESHOLDS, SWIVELS, PRICING, DELIVERY, MAX_KM, ATTACHMENTS, WELD,
+};
+if (typeof module === "object" && module.exports) module.exports = GRILLE_DATA;
+else window.GrilleData = GRILLE_DATA;

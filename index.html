@@ -4,22 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Раздвижные решётки — прототип</title>
+<title>Решётки на окна и двери — прототип</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles-v2.css">
 </head>
 <body>
 
+<a class="skip" href="#main">К содержанию</a>
 <div class="demo-bar">Прототип. Название бренда, контакты и часть цен — демо-данные. Оплата и отправка форм не подключены.</div>
 
 <header>
   <div class="wrap">
     <a class="logo" href="#"><span class="logo-mark" aria-hidden="true"></span>РЕШЁТКА·ПРО</a>
     <nav aria-label="Основное меню">
-      <a href="#calc">Калькулятор</a>
-      <a href="#models">Модели</a>
+      <a href="#calc">Раздвижные</a>
+      <a href="#wcalc">Сварные</a>
       <a href="#how">Как заказать</a>
+      <a href="#safety">Безопасность</a>
       <a href="#feedback">Отправить ТЗ</a>
       <a href="#faq">Вопросы</a>
     </nav>
@@ -27,40 +30,55 @@
   </div>
 </header>
 
-<main>
+<main id="main">
 <div class="hero">
-  <div class="wrap">
+  <div class="wrap hero-v2">
     <div>
-      <h1>Раздвижные решётки на&nbsp;заказ. Цена за&nbsp;1&nbsp;минуту</h1>
-      <p class="lead">Знаете размеры — посчитайте и оплатите заказ на сайте. Не знаете — вызовите замерщика, это бесплатно.</p>
-      <a class="btn btn-accent" href="#calc">Рассчитать стоимость</a>
+      <h1>Решётки на&nbsp;окна и&nbsp;двери: раздвижные и&nbsp;сварные. Цена за&nbsp;минуту</h1>
+      <p class="lead">Считайте цену под ключ с монтажом и доставкой. Знаете размеры — оплатите 70% на сайте, не знаете — вызовите замерщика бесплатно.</p>
+      <div class="entry-cards">
+        <a class="entry" href="#calc">
+          <span class="entry-art" id="heroSliding"></span>
+          <b>Раздвижные</b>
+          <span>Складываются в сторону, как гармошка. Окна, двери, витрины.</span>
+        </a>
+        <a class="entry" href="#wcalc">
+          <span class="entry-art" id="heroWeld"></span>
+          <b>Сварные</b>
+          <span>Глухие или со створками и люком. Окна первых этажей, балконы.</span>
+        </a>
+      </div>
       <ul class="hero-facts">
-        <li>8 моделей — от дачи до банка</li>
+        <li>Цена под ключ строками</li>
         <li>Предоплата 70% онлайн</li>
         <li>Карта, СБП, чек на почту</li>
       </ul>
     </div>
-    <div class="hero-art" aria-hidden="true">
-      <svg viewBox="0 0 320 220" width="100%"><g id="heroGrille"></g></svg>
+    <div class="advisor card-dark" id="advisor" aria-labelledby="advisorTitle">
+      <h2 id="advisorTitle" class="adv-title">Что вам нужно?</h2>
+      <div id="advisorQuestions"></div>
+      <div class="adv-result" id="advisorResult" aria-live="polite"></div>
     </div>
   </div>
 </div>
 
+<!-- ===================== Sliding grilles ===================== -->
+<div id="sliding">
 <section id="calc" aria-labelledby="calcTitle">
   <div class="wrap">
-    <h2 id="calcTitle">Калькулятор стоимости</h2>
+    <p class="kicker">Раздвижные решётки</p>
+    <h2 id="calcTitle">Калькулятор раздвижной решётки</h2>
     <p class="sub">Сначала выберите, как вам удобнее.</p>
 
-    <div class="modes" id="modes" role="group" aria-label="Как заказать"></div>
+    <div class="modes" id="modes" role="group" aria-label="Как заказать раздвижную решётку"></div>
 
-    <!-- Scenarios «self» and «install»: calculator -->
     <div class="calc" id="calcPanel">
       <div class="card">
         <div class="notice" id="sizeNotice"></div>
         <div class="tabs" id="tabs" role="tablist" aria-label="Проёмы"></div>
 
         <div class="step">
-          <div class="step-title"><span class="num">1</span>Размер проёма</div>
+          <h3 class="step-title"><span class="num">1</span>Размер проёма</h3>
           <div class="row row-3">
             <label class="field">Ширина, мм<input type="number" id="width" min="300" max="6000" step="1" inputmode="numeric"></label>
             <label class="field">Высота, мм<input type="number" id="height" min="300" max="4000" step="1" inputmode="numeric"></label>
@@ -70,7 +88,7 @@
         </div>
 
         <div class="step">
-          <div class="step-title"><span class="num">2</span>Модель</div>
+          <h3 class="step-title"><span class="num">2</span>Модель</h3>
           <div class="cats chips" id="cats" role="group" aria-label="Назначение"></div>
           <div class="models" id="models"></div>
           <div class="model-about" id="modelAbout"></div>
@@ -78,17 +96,17 @@
         </div>
 
         <div class="step" id="finishStep">
-          <div class="step-title"><span class="num">3</span>Покраска</div>
+          <h3 class="step-title"><span class="num">3</span>Покраска</h3>
           <div id="finish"></div>
         </div>
 
         <div class="step" id="lockStep">
-          <div class="step-title"><span class="num">4</span>Замок</div>
+          <h3 class="step-title"><span class="num">4</span>Замок</h3>
           <div id="lock"></div>
         </div>
 
         <div class="step">
-          <div class="step-title"><span class="num">5</span>Конструкция и опции</div>
+          <h3 class="step-title"><span class="num">5</span>Конструкция и опции</h3>
           <div id="construction"></div>
           <div class="opts" id="optsBasic"></div>
           <details class="more" id="moreBox">
@@ -98,17 +116,17 @@
         </div>
 
         <div class="step">
-          <div class="step-title"><span class="num">6</span><span id="deliveryTitle">Доставка</span></div>
+          <h3 class="step-title"><span class="num">6</span><span id="deliveryTitle">Доставка</span></h3>
           <div class="chips" id="delivery" role="group" aria-label="Доставка"></div>
           <label class="field" id="kmField" style="margin-top:12px;max-width:220px">Км за МКАД<input type="number" id="km" min="0" max="300" step="1" inputmode="numeric"></label>
           <div id="installExtras"></div>
         </div>
       </div>
 
-      <aside class="card summary" aria-live="polite">
+      <aside class="card summary" aria-label="Итог расчёта раздвижной решётки">
         <div class="preview"><svg id="preview" viewBox="0 0 220 150" width="100%" height="150" aria-hidden="true"></svg></div>
         <ul class="lines" id="lines"></ul>
-        <div class="total"><span>Итого</span><b id="total">0 ₽</b></div>
+        <div class="total" aria-live="polite"><span>Итого</span><b id="total">0 ₽</b></div>
         <div class="pay-split">
           <div class="pre"><span>Предоплата 70% онлайн</span><span id="prepay">0 ₽</span></div>
           <div><span id="restLabel">Остаток 30%</span><span id="rest">0 ₽</span></div>
@@ -118,50 +136,121 @@
       </aside>
     </div>
 
-    <!-- Scenario «measure»: call a measurer -->
-    <div class="two-col" id="measurePanel" hidden>
-      <div class="card">
-        <h3 style="margin-bottom:8px">Вызвать замерщика</h3>
-        <p class="sub" style="margin-bottom:16px">Перезвоним в течение часа в рабочее время и согласуем день.</p>
-        <form class="form-grid" id="measureForm" novalidate>
-          <label class="field">Имя<input type="text" name="name" autocomplete="name" required></label>
-          <label class="field">Телефон<input type="tel" name="phone" autocomplete="tel" placeholder="+7" required></label>
-          <label class="field">Адрес объекта<input type="text" name="address" autocomplete="street-address" required></label>
-          <label class="field">Что нужно закрыть решётками<textarea name="comment" placeholder="Например: 3 окна на первом этаже и входная дверь в магазин"></textarea></label>
-          <div data-attach></div>
-          <label class="toggle" style="font-size:14px"><input type="checkbox" name="consent"> Согласен на обработку персональных данных</label>
-          <div class="err" role="alert"></div>
-          <button class="btn btn-accent" type="submit">Вызвать замерщика</button>
-          <div class="result" hidden></div>
-        </form>
-      </div>
-      <div class="card">
-        <h3 style="margin-bottom:12px">Как проходит замер</h3>
-        <ul class="check-list">
-          <li>Замер бесплатный, по Москве и области.</li>
-          <li>Замерщик привезёт образцы и поможет выбрать модель и опции.</li>
-          <li>На месте посчитает точную цену — она фиксируется в договоре.</li>
-          <li>После замера пришлём ссылку на оплату 70% — картой или по СБП.</li>
-          <li>Монтаж — в согласованный день, остаток 30% после монтажа.</li>
-        </ul>
-        <p class="hint" style="margin-top:16px">Ориентировочные цены моделей — в разделе <a href="#models">«Модели»</a>.</p>
-      </div>
+    <div class="two-col" id="measurePanel" hidden></div>
+  </div>
+</section>
+
+<section id="models" class="tinted" aria-labelledby="modelsTitle">
+  <div class="wrap">
+    <h2 id="modelsTitle">Модели раздвижных решёток</h2>
+    <p class="sub">Сгруппировали по назначению — так проще выбрать. Цена за 1 м², окраска в белый RAL 9016 включена.</p>
+    <div id="catalog"></div>
+
+    <h3 class="block-title">Видео работы механизма</h3>
+    <div class="video-stub" role="img" aria-label="Здесь будет видео работы механизма раздвижной решётки">
+      <span class="video-play" aria-hidden="true">▶</span>
+      <span>Видео скоро</span>
+      <small>Покажем, как решётка складывается, запирается и поворачивается</small>
     </div>
   </div>
 </section>
+</div>
 
-<section id="models" style="background:#e9ebed" aria-labelledby="modelsTitle">
+<!-- ===================== Welded grilles ===================== -->
+<div id="weld">
+<section id="wcalc" aria-labelledby="wcalcTitle">
   <div class="wrap">
-    <h2 id="modelsTitle">Модели</h2>
-    <p class="sub">Сгруппировали по назначению — так проще выбрать. Цена за 1 м², окраска в белый RAL 9016 включена.</p>
-    <div id="catalog"></div>
+    <p class="kicker">Сварные решётки</p>
+    <h2 id="wcalcTitle">Конфигуратор сварной решётки</h2>
+    <p class="sub">Размер, открывание, рисунок, замок и покраска — цена под ключ сразу. <span class="demo-tag">цены демо</span></p>
+
+    <div class="modes" id="wModes" role="group" aria-label="Как заказать сварную решётку"></div>
+
+    <div class="calc" id="wCalcPanel">
+      <div class="card">
+        <div class="notice" id="wSizeNotice"></div>
+        <div class="tabs" id="wTabs" role="tablist" aria-label="Проёмы"></div>
+
+        <div class="step">
+          <h3 class="step-title"><span class="num">1</span>Размер проёма</h3>
+          <div class="row row-3">
+            <label class="field">Ширина, мм<input type="number" id="wWidth" min="300" max="4000" step="1" inputmode="numeric"></label>
+            <label class="field">Высота, мм<input type="number" id="wHeight" min="300" max="3000" step="1" inputmode="numeric"></label>
+            <label class="field">Кол-во одинаковых<input type="number" id="wQty" min="1" max="50" step="1" inputmode="numeric"></label>
+          </div>
+          <div class="hint" id="wSizeHint"></div>
+        </div>
+
+        <div class="step">
+          <h3 class="step-title"><span class="num">2</span>Открывание</h3>
+          <div class="type-grid" id="wTypes" role="group" aria-label="Вариант открывания"></div>
+          <div id="wHinge"></div>
+          <div class="weld-stage">
+            <div id="wScheme"></div>
+            <p class="model-about" id="wTypeAbout"></p>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3 class="step-title"><span class="num">3</span>Рисунок</h3>
+          <div class="pattern-grid" id="wPatterns" role="group" aria-label="Рисунок решётки"></div>
+        </div>
+
+        <div class="step">
+          <h3 class="step-title"><span class="num">4</span>Установка</h3>
+          <div id="wMount"></div>
+        </div>
+
+        <div class="step" id="wLockStep">
+          <h3 class="step-title"><span class="num">5</span>Замок</h3>
+          <div id="wLock"></div>
+        </div>
+
+        <div class="step">
+          <h3 class="step-title"><span class="num">6</span>Покраска</h3>
+          <div id="wFinish"></div>
+        </div>
+
+        <div class="step">
+          <h3 class="step-title"><span class="num">7</span><span id="wDeliveryTitle">Доставка</span></h3>
+          <div class="chips" id="wDelivery" role="group" aria-label="Доставка"></div>
+          <label class="field" id="wKmField" style="margin-top:12px;max-width:220px">Км за МКАД<input type="number" id="wKm" min="0" max="300" step="1" inputmode="numeric"></label>
+          <div id="wInstall"></div>
+        </div>
+      </div>
+
+      <aside class="card summary" aria-label="Итог расчёта сварной решётки">
+        <div class="preview preview-weld" id="wPreview"></div>
+        <ul class="lines" id="wLines"></ul>
+        <div class="total" aria-live="polite"><span>Итого</span><b id="wTotal">0 ₽</b></div>
+        <p class="demo-note">Цены рисунка и замков ориентировочные, подтвердим при заказе</p>
+        <div class="pay-split">
+          <div class="pre"><span>Предоплата 70% онлайн</span><span id="wPrepay">0 ₽</span></div>
+          <div><span id="wRestLabel">Остаток 30%</span><span id="wRest">0 ₽</span></div>
+        </div>
+        <button class="btn btn-accent" id="wToCheckout" type="button">Оформить и оплатить</button>
+        <p class="fine">Изготовим по вашим размерам. Сомневаетесь — выберите «Не знаю размеров», замер бесплатный.</p>
+      </aside>
+    </div>
+
+    <div class="two-col" id="wMeasurePanel" hidden></div>
   </div>
 </section>
 
+<section id="weldTypes" class="tinted" aria-labelledby="weldTypesTitle">
+  <div class="wrap">
+    <h2 id="weldTypesTitle">Варианты открывания сварных решёток</h2>
+    <p class="sub">Нажмите «Открыть», чтобы увидеть, куда поворачивается створка. Пунктир сходится к стороне петель.</p>
+    <div class="weld-grid" id="weldCatalog"></div>
+  </div>
+</section>
+</div>
+
+<!-- ===================== Common ===================== -->
 <section id="how" aria-labelledby="howTitle">
   <div class="wrap">
     <h2 id="howTitle">Три способа заказать</h2>
-    <p class="sub">Выбирайте тот, что подходит вам.</p>
+    <p class="sub">Одинаково для раздвижных и сварных решёток.</p>
     <div class="grid-4 steps">
       <div class="card"><b>Знаю размеры, монтаж не нужен</b><p class="sub" style="margin:6px 0 0">Считаете цену, оплачиваете 70% на сайте. Изготовим по вашим размерам, остаток — при получении.</p></div>
       <div class="card"><b>Знаю размеры, нужен монтаж</b><p class="sub" style="margin:6px 0 0">То же, плюс монтаж. За точность размеров отвечаете вы — замерщик не приезжает.</p></div>
@@ -170,28 +259,73 @@
   </div>
 </section>
 
-<section style="padding-top:0" aria-labelledby="compareTitle">
+<section class="tinted" aria-labelledby="turnkeyTitle">
+  <div class="wrap two-col">
+    <div>
+      <h2 id="turnkeyTitle">Цена под ключ</h2>
+      <p class="sub">В итоге калькулятора — всё, что нужно, чтобы решётка стояла на месте. Каждая сумма отдельной строкой.</p>
+      <ul class="check-list">
+        <li>Изготовление по вашим размерам</li>
+        <li>Покраска: грунт-эмаль (сварные) или белый RAL 9016 (раздвижные) — уже в цене</li>
+        <li>Замок, проушины и опции — по вашему выбору</li>
+        <li>Монтаж с анкерами — фиксированная ставка за м², не процент</li>
+        <li>Доставка по Москве бесплатно при монтаже</li>
+      </ul>
+    </div>
+    <div class="card terms" aria-labelledby="termsTitle">
+      <h3 id="termsTitle">Срок и гарантия</h3>
+      <div class="terms-row"><b>15 дней</b><span>изготовление после согласования заказа</span></div>
+      <div class="terms-row"><b>12 месяцев</b><span>гарантия на сварные швы, механизм и покраску</span></div>
+      <p class="hint">Точный срок и гарантия фиксируются в договоре.</p>
+    </div>
+  </div>
+</section>
+
+<section id="safety" aria-labelledby="safetyTitle">
+  <div class="wrap two-col">
+    <div>
+      <h2 id="safetyTitle">Безопасность и аварийный выход</h2>
+      <!-- TODO: verify fire-safety wording against official regulations before launch -->
+      <p class="lead-dark">Решётка, через которую возможна эвакуация, должна открываться изнутри без ключа. Подберём вариант под требования вашего объекта.</p>
+      <ul class="check-list">
+        <li>Для окон, через которые нужен выход, — створка или люк-створка в глухой решётке.</li>
+        <li>Изнутри — запор или замок, который открывается без ключа.</li>
+        <li>Требования к объекту уточним на замере.</li>
+      </ul>
+    </div>
+    <div class="card safety-art">
+      <div id="safetyScheme"></div>
+    </div>
+  </div>
+</section>
+
+<section class="tinted" aria-labelledby="compareTitle">
   <div class="wrap">
     <h2 id="compareTitle">Чем мы удобнее</h2>
-    <p class="sub">Сравнили с сайтами других производителей раздвижных решёток (октябрь 2026).</p>
-    <div class="table-scroll">
+    <p class="sub">Сравнили с сайтами производителей решёток (октябрь–ноябрь 2026).</p>
+    <div class="table-scroll" tabindex="0" role="region" aria-labelledby="compareTitle">
       <table class="compare">
-        <thead><tr><th></th><th>Мы</th><th>Обычно у других</th></tr></thead>
+        <thead><tr><th scope="col">Что важно</th><th scope="col">У нас</th><th scope="col">Обычно у других</th></tr></thead>
         <tbody>
-          <tr><td>Цена с опциями, монтажом и доставкой</td><td class="yes">Сразу в калькуляторе</td><td>«от … ₽/м²», остальное по звонку</td></tr>
-          <tr><td>Несколько проёмов в одном расчёте</td><td class="yes">Да</td><td>Чаще нет</td></tr>
-          <tr><td>Онлайн-оплата</td><td class="yes">Карта, СБП, чек на почту</td><td>Чаще только по счёту</td></tr>
-          <tr><td>Отправить ТЗ или проект</td><td class="yes">Прямо в форме, до 5 файлов</td><td>Только по почте</td></tr>
+          <tr><th scope="row">Цена</th><td class="yes">Под ключ в рублях, каждая позиция строкой</td><td>«от N ₽/м²» без состава и единой формулы</td></tr>
+          <tr><th scope="row">Калькулятор</th><td class="yes">Точный, для раздвижных и сварных</td><td>Нет или «примерный»; на разных страницах разные цены</td></tr>
+          <tr><th scope="row">Монтаж и покраска</th><td class="yes">Монтаж — ставка за м², покраска видна заранее</td><td>Монтаж +20–30% от цены, покраска +15–20% всплывает позже</td></tr>
+          <tr><th scope="row">Как открывается</th><td class="yes">Схемы с анимацией для каждого варианта</td><td>Схем и направления открывания нет</td></tr>
+          <tr><th scope="row">Несколько проёмов</th><td class="yes">В одном расчёте</td><td>Чаще по одному или по звонку</td></tr>
+          <tr><th scope="row">Оплата</th><td class="yes">70% онлайн: карта, СБП, чек на почту</td><td>Чаще только по счёту</td></tr>
+          <tr><th scope="row">ТЗ и фото</th><td class="yes">Прямо в форме, до 5 файлов</td><td>Только по почте</td></tr>
+          <tr><th scope="row">Срок и гарантия</th><td class="yes">Указаны на сайте</td><td>Указаны редко</td></tr>
+          <tr><th scope="row">Аварийный выход</th><td class="yes">Варианты со створкой и люком</td><td>Тема почти не раскрыта</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
 
-<section id="feedback" style="background:#e9ebed" aria-labelledby="feedbackTitle">
+<section id="feedback" aria-labelledby="feedbackTitle">
   <div class="wrap two-col">
     <div>
-      <h2 id="feedbackTitle">Есть ТЗ, проект или фото проёма?</h2>
+      <h2 id="feedbackTitle">Отправить ТЗ, проект или фото проёма</h2>
       <p class="sub">Прикрепите файлы — посчитаем стоимость и пришлём коммерческое предложение. Подходит для компаний, тендеров и нестандартных проёмов.</p>
       <ul class="check-list">
         <li>PDF, Word, Excel, DWG, фото, ZIP</li>
@@ -208,22 +342,26 @@
         </div>
         <label class="field">Сообщение<textarea name="comment" placeholder="Что нужно сделать, сроки, адрес объекта"></textarea></label>
         <div data-attach></div>
-        <label class="toggle" style="font-size:14px"><input type="checkbox" name="consent"> Согласен на обработку персональных данных</label>
+        <label class="toggle"><input type="checkbox" name="consent"> Согласен на обработку персональных данных</label>
         <div class="err" role="alert"></div>
         <button class="btn btn-dark" type="submit">Отправить</button>
-        <div class="result" hidden></div>
+        <div class="result" role="status" hidden></div>
       </form>
     </div>
   </div>
 </section>
 
-<section id="faq" aria-labelledby="faqTitle">
+<section id="faq" class="tinted" aria-labelledby="faqTitle">
   <div class="wrap">
     <h2 id="faqTitle">Частые вопросы</h2>
     <details class="faq"><summary>Как правильно снять размеры?</summary><p>Ширину и высоту проёма меряйте в трёх местах и берите наименьшее значение, в миллиметрах. Если сомневаетесь — вызовите замерщика, это бесплатно.</p></details>
     <details class="faq"><summary>Кто отвечает за размеры, если я указал их сам?</summary><p>Вы. Мы изготавливаем решётку точно по вашим размерам. Если она не подойдёт из-за ошибки в размерах, переделка оплачивается отдельно. Чтобы этого избежать, закажите бесплатный замер.</p></details>
-    <details class="faq"><summary>Сколько места займёт решётка в сложенном виде?</summary><p>Примерно 15–20% ширины проёма. Калькулятор показывает это для ваших размеров.</p></details>
-    <details class="faq"><summary>Почему для низких решёток цена выше?</summary><p>Для проёмов ниже 1200 мм действует наценка 30%: механизм тот же, а площадь меньше.</p></details>
+    <details class="faq"><summary>Чем распашная (сварная со створкой) отличается от раздвижной?</summary><p>Раздвижная складывается в сторону гармошкой и днём почти не занимает места — удобно для витрин и дверей. Сварная со створкой открывается как дверь: она жёстче и обычно дешевле, но створке нужно место для поворота.</p></details>
+    <details class="faq"><summary>Что такое люк-створка?</summary><p>Это небольшая дверца внутри глухой сварной решётки. Решётка остаётся прочной и цельной, а через люк можно выбраться наружу. По умолчанию люк 600×800 мм, точный размер подбираем на замере.</p></details>
+    <details class="faq"><summary>Можно ли открыть решётку при пожаре?</summary><p>Можно, если выбрать вариант со створкой или люком и запор, который открывается изнутри без ключа. Глухая решётка не открывается. Подберём вариант под требования вашего объекта.</p></details>
+    <details class="faq"><summary>Как ухаживать за решёткой и можно ли её перекрасить?</summary><p>Достаточно раз в год протереть решётку и осмотреть покрытие. Сколы подкрашивают эмалью по металлу того же цвета. Перекрасить можно в любой цвет: зачистить, обезжирить и нанести грунт-эмаль. Порошковая покраска служит дольше, но подкрашивается обычной эмалью.</p></details>
+    <details class="faq"><summary>Сколько места займёт раздвижная решётка в сложенном виде?</summary><p>Примерно 15–20% ширины проёма. Калькулятор показывает это для ваших размеров.</p></details>
+    <details class="faq"><summary>Почему для низких раздвижных решёток цена выше?</summary><p>Для проёмов ниже 1200 мм действует наценка 30%: механизм тот же, а площадь меньше.</p></details>
     <details class="faq"><summary>Можно ли оплатить по счёту от юрлица?</summary><p>Да. Отправьте реквизиты через форму «Отправить ТЗ» — выставим счёт.</p></details>
   </div>
 </section>
@@ -237,8 +375,8 @@
   </div>
 </footer>
 
-<div class="mobile-total" id="mobileTotal" aria-hidden="true">
-  <div><small>Итого · предоплата <span id="mPrepay"></span></small><b id="mTotal">0 ₽</b></div>
+<div class="mobile-total" id="mobileTotal" role="region" aria-label="Итог расчёта" hidden>
+  <div><small><span id="mTitle"></span> · предоплата <span id="mPrepay"></span></small><b id="mTotal">0 ₽</b></div>
   <button class="btn btn-accent" type="button" id="mCheckout">Оформить</button>
 </div>
 
@@ -254,25 +392,33 @@
     <label class="field" id="addrField">Адрес<input type="text" name="address" autocomplete="street-address"></label>
     <label class="field">Комментарий<textarea name="comment" style="min-height:60px"></textarea></label>
     <div data-attach></div>
-    <label class="toggle" style="font-size:14px;align-items:flex-start"><input type="checkbox" name="sizes">
+    <label class="toggle" style="align-items:flex-start"><input type="checkbox" name="sizes">
       <span>Размеры снял(а) я сам(а) и отвечаю за их точность. Решётку изготовят по этим размерам; переделка из-за ошибки в размерах оплачивается отдельно.</span></label>
-    <label class="toggle" style="font-size:14px"><input type="checkbox" name="consent"> Согласен с офертой и обработкой персональных данных</label>
+    <label class="toggle"><input type="checkbox" name="consent"> Согласен с офертой и обработкой персональных данных</label>
     <div class="err" role="alert"></div>
     <div class="actions">
       <button class="btn btn-accent" type="submit" data-flow="pay" id="payBtn">Оплатить 70% через ЮKassa</button>
       <button class="btn btn-ghost" type="button" data-flow="close">Вернуться к расчёту</button>
     </div>
-    <div class="result" hidden></div>
+    <div class="result" role="status" hidden></div>
   </form>
 </dialog>
 
 <dialog id="grilleDialog" class="grille-dialog" aria-label="Как устроена решётка">
-  <button type="button" class="dlg-close" data-act="animClose" aria-label="Закрыть">×</button>
+  <button type="button" class="dlg-close" aria-label="Закрыть">×</button>
   <div id="grilleAnim"></div>
 </dialog>
 
-<script src="grille-anim.js"></script>
 <script src="data.js"></script>
+<script src="calc-common.js"></script>
+<script src="calc-sliding.js"></script>
+<script src="calc-weld.js"></script>
+<script src="advisor.js"></script>
+<script src="grille-anim.js"></script>
+<script src="weld-anim.js"></script>
+<script src="ui.js"></script>
+<script src="app-sliding.js"></script>
+<script src="app-weld.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
