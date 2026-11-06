@@ -15,6 +15,8 @@
   const NORMALIZE = { sliding: S.normalizeOpening, weld: W.normalizeWeldOpening };
   const KEEP_ON_KIND_CHANGE = ["id", "width", "height", "qty"];
 
+  const MAX_POSITIONS = 30;
+
   let nextId = 1;
 
   const createOrder = () => ({ mode: "install", positions: [], active: 0, delivery: "moscow", km: 0 });
@@ -38,8 +40,28 @@
     };
   }
 
-  const addPosition = (order, kind, patch) =>
-    setOrder(order, { positions: [...order.positions, newPosition(kind, patch)], active: order.positions.length });
+  const canAddPosition = (order) => order.positions.length < MAX_POSITIONS;
+
+  /** Adds a fresh position at the end and makes it active; at the limit the order is returned unchanged. */
+  function addPosition(order, kind, patch) {
+    if (!canAddPosition(order)) return order;
+    return setOrder(order, { positions: [...order.positions, newPosition(kind, patch)], active: order.positions.length });
+  }
+
+  /**
+   * Copies position `index` (default: the active one): a deep copy with a new unique id, inserted right
+   * after the original and made active. The copy counts as edited (not pristine). At the limit, or for
+   * a missing index, the order is returned unchanged.
+   */
+  function copyPosition(order, index = order.active) {
+    const source = order.positions[index];
+    if (!source || !canAddPosition(order)) return order;
+    const freeId = Math.max(nextId, ...order.positions.map((p) => p.id + 1));
+    nextId = freeId + 1;
+    const copy = { ...structuredClone(source), id: freeId, pristine: false };
+    const positions = [...order.positions.slice(0, index + 1), copy, ...order.positions.slice(index + 1)];
+    return setOrder(order, { positions, active: index + 1 });
+  }
 
   function removePosition(order, index) {
     const positions = order.positions.filter((_, i) => i !== index);
@@ -70,5 +92,5 @@
     return updatePosition(replacePosition(order, index, kind), index, {});
   }
 
-  return { createOrder, newPosition, setOrder, addPosition, removePosition, updatePosition, replacePosition, changeKind };
+  return { MAX_POSITIONS, createOrder, newPosition, setOrder, addPosition, canAddPosition, copyPosition, removePosition, updatePosition, replacePosition, changeKind };
 });

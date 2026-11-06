@@ -61,8 +61,8 @@ const MODELS = [
 ];
 
 const FINISHES = [
-  { id: "white", name: "Белый RAL 9016", perM2: 0, source: "competitor" },
-  { id: "ral", name: "Любой цвет RAL, гладкий", perM2: 3900, source: "competitor" },
+  { id: "white", name: "Белый (цвет по каталогу RAL 9016)", perM2: 0, source: "competitor" },
+  { id: "ral", name: "Любой цвет по каталогу RAL, гладкий", perM2: 3900, source: "competitor" },
   { id: "texture", name: "Структурированная (шагрень)", perM2: 6400, source: "competitor" },
 ];
 const ZINC_PER_M2 = 9200;            // competitor
@@ -83,7 +83,7 @@ const EXTRA_BOLTS_PAIR = 2875;       // competitor
  */
 const OPTIONS = [
   // Basic — shown right away
-  { id: "eyelets", group: "basic", name: "Проушины под навесной замок", hint: "две пары", price: 1000, unit: "компл.", source: "price-list" },
+  { id: "eyelets", group: "basic", name: "Петли под навесной замок (проушины)", hint: "две пары", price: 1000, unit: "компл.", source: "price-list" },
   { id: "twoWay", group: "basic", name: "Раздвигание в две стороны", hint: "легче открывать проёмы шире 1,5 м", price: 2800, unit: "шт.", source: "price-list" },
   { id: "handle", group: "basic", name: "Ручка", hint: "не прищемить пальцы при открывании", price: 290, unit: "шт.", source: "competitor", maxQty: 4 },
   // Advanced — under «Ещё опции»
@@ -133,8 +133,8 @@ const PRICING = {
  * Carrier price is still a DEMO placeholder (competitor level).
  */
 const DELIVERY = [
-  { id: "moscow", name: "По Москве", price: 5000 },
-  { id: "region", name: "За МКАД", price: 5000, perKm: 80 },
+  { id: "moscow", name: "По Москве (в пределах МКАД)", price: 5000 },
+  { id: "region", name: "За МКАД, включая Химки, Мытищи и Балашиху", price: 5000, perKm: 80 },
   { id: "carrier", name: "До транспортной компании", price: 400, noInstall: true, source: "competitor" },
   { id: "pickup", name: "Самовывоз", price: 0, noInstall: true },
 ];
@@ -154,7 +154,7 @@ const WELD = {
   basePerM2: 5500,
   openings: [
     {
-      id: "blind", name: "Глухая", short: "не открывается", openPrice: 0, sashes: 0,
+      id: "blind", name: "Не открывается (глухая)", short: "без створок", openPrice: 0, sashes: 0,
       fits: "Окна, которые не нужно открывать: подвалы, склады, задние фасады.",
       about: "Цельная решётка без створок. Самая прочная и доступная, но через неё нельзя выйти.",
     },
@@ -169,7 +169,7 @@ const WELD = {
       about: "Две створки расходятся от центра — каждая уже и легче, им нужно меньше места при открывании.",
     },
     {
-      id: "hatch", name: "Люк-створка", short: "дверца в глухой решётке", openPrice: 4000, sashes: 1,
+      id: "hatch", name: "Дверца в глухой решётке (люк)", short: "запасной выход", openPrice: 4000, sashes: 1,
       fits: "Первые этажи и квартиры, где нужна прочная глухая решётка и запасной выход.",
       about: "Глухая решётка со встроенной небольшой дверцей: в обычной жизни закрыто, при необходимости можно выбраться.",
     },
@@ -186,18 +186,18 @@ const WELD = {
     { id: "forged", name: "С элементами ковки", hint: "завитки, пики, корзинки", perM2: 2500, source: "owner" },
   ],
   mounts: [
-    { id: "inside", name: "В проём", hint: "решётка внутри откосов, анкеры в стены проёма" },
-    { id: "overlay", name: "Внакладку", hint: "решётка перекрывает проём и крепится к фасаду — для узких или неровных откосов" },
+    { id: "inside", name: "Внутри проёма", hint: "решётка внутри откосов, анкеры в стены проёма" },
+    { id: "overlay", name: "Снаружи, на стене", hint: "решётка перекрывает проём и крепится к фасаду — для узких или неровных откосов" },
   ],
   locks: [
     { id: "none", name: "Без замка", price: 0 },
     { id: "mortise", name: "Врезной замок", price: 3900, source: "owner" },
     { id: "rim", name: "Ригельный замок", price: 7900, source: "owner" },
   ],
-  eyelets: { name: "Проушины под навесной замок", price: 1000, source: "price-list" },
+  eyelets: { name: "Петли под навесной замок (проушины)", price: 1000, source: "price-list" },
   finishes: [
     { id: "enamel", name: "Грунт-эмаль", hint: "стандартная покраска в два слоя", perM2: 1000 },
-    { id: "zinc", name: "Цинко-грунт", hint: "цинконаполненный грунт: лучше защищает от ржавчины", perM2: 1500 },
+    { id: "zinc", name: "Цинко-грунт (защита от ржавчины)", hint: "цинконаполненный грунт: лучше защищает от ржавчины", perM2: 1500 },
     { id: "powder", name: "Порошковая покраска", hint: "прочнее и ровнее", perM2: 2500 },
   ],
   installPerM2: 3000,

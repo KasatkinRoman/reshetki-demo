@@ -21,10 +21,10 @@
     <nav aria-label="Основное меню">
       <a href="#order">Заказ</a>
       <a href="#why">Почему мы</a>
-      <a href="#feedback">Отправить ТЗ</a>
+      <a href="#feedback">Отправить задание (ТЗ)</a>
       <a href="#faq">Вопросы</a>
     </nav>
-    <div class="head-contacts"><a class="phone" href="tel:+74950056971">+7 495 005-69-71</a><a class="mail" href="mailto:stoppojarrf@yandex.ru">stoppojarrf@yandex.ru</a></div>
+    <a class="head-contacts" href="tel:+74950056971"><span class="phone">+7 495 005-69-71</span><span class="mail">stoppojarrf@yandex.ru</span></a>
   </div>
 </header>
 
@@ -32,7 +32,7 @@
 <div class="hero">
   <div class="wrap hero-v2">
     <div>
-      <h1>Решётки на&nbsp;окна и&nbsp;двери: раздвижные и&nbsp;сварные. Цена за&nbsp;минуту</h1>
+      <h1>Решётки на&nbsp;окна и&nbsp;двери: раздвижные и&nbsp;сварные. Посчитайте цену онлайн</h1>
       <p class="lead">Раздвижные и сварные — в одном расчёте, с монтажом и доставкой. Знаете размеры — оплатите 70% на сайте, не знаете — вызовите замерщика бесплатно.</p>
       <div class="entry-cards">
         <a class="entry" href="#order" data-entry="sliding">
@@ -43,7 +43,7 @@
         <a class="entry" href="#order" data-entry="weld">
           <span class="entry-art" id="heroWeld"></span>
           <b>Сварные</b>
-          <span>Глухие или со створками и люком. Окна первых этажей, балконы.</span>
+          <span>Не открываются, со створками или с дверцей-люком. Окна первых этажей, балконы.</span>
         </a>
       </div>
     </div>
@@ -81,7 +81,10 @@
           <div class="step">
             <div class="editor-head">
               <h3 class="step-title" id="editorTitle">Позиция</h3>
-              <button type="button" class="btn btn-ghost btn-sm" id="removeActive" data-act="remove" data-val="0">Удалить позицию</button>
+              <div class="editor-actions">
+                <button type="button" class="btn btn-ghost btn-sm" id="copyActive" data-act="copy" data-val="0">Копировать позицию</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="removeActive" data-act="remove" data-val="0">Удалить позицию</button>
+              </div>
             </div>
             <div class="sub-title" style="margin-top:0">Тип решётки</div>
             <div class="chips" id="kindSwitch" role="group" aria-label="Тип решётки"></div>
@@ -92,6 +95,7 @@
               <label class="field">Кол-во одинаковых<input type="number" id="qty" min="1" max="50" step="1" inputmode="numeric"></label>
             </div>
             <div class="hint" id="sizeHint"></div>
+            <div class="notice" id="sizeAdvice" role="status" hidden></div>
           </div>
 
           <!-- Sliding position steps (editor-sliding.js) -->
@@ -147,7 +151,7 @@
               <div id="wMount"></div>
             </div>
             <div class="step">
-              <h3 class="step-title"><span class="num">5</span>Замок и проушины</h3>
+              <h3 class="step-title"><span class="num">5</span>Замок и петли под навесной замок (проушины)</h3>
               <div id="wLock"></div>
             </div>
             <div class="step">
@@ -160,7 +164,7 @@
         <div class="step order-common">
           <h3 class="step-title"><span id="deliveryTitle">Доставка</span><small class="step-note">одна на весь заказ</small></h3>
           <div class="chips" id="delivery" role="group" aria-label="Доставка"></div>
-          <label class="field" id="kmField" style="margin-top:12px;max-width:220px">Км за МКАД<input type="number" id="km" min="0" max="300" step="1" inputmode="numeric"></label>
+          <label class="field" id="kmField" style="margin-top:12px;max-width:220px">Км от МКАД до адреса<input type="number" id="km" min="0" max="300" step="1" inputmode="numeric"></label>
           <div id="installRates"></div>
         </div>
       </div>
@@ -168,12 +172,22 @@
       <aside class="card summary" aria-label="Итог заказа">
         <div class="preview" id="preview"></div>
         <ul class="lines" id="lines"></ul>
+        <!-- TODO owner: VAT status of prices -->
         <div class="total" aria-live="polite"><span>Итого</span><b id="total">0 ₽</b></div>
         <div class="pay-split">
           <div class="pre"><span>Предоплата 70% онлайн</span><span id="prepay">0 ₽</span></div>
           <div><span id="restLabel">Остаток 30%</span><span id="rest">0 ₽</span></div>
         </div>
         <button class="btn btn-accent" id="toCheckout" type="button">Оформить и оплатить</button>
+        <!-- TODO owner: contract timing and prepayment refund terms -->
+        <ul class="trust" aria-label="Что важно знать перед оплатой">
+          <li>Замер бесплатный</li>
+          <li class="js-rest-note">Остаток 30% — после монтажа</li>
+          <li>Гарантия 12 месяцев</li>
+          <li>Реквизиты ООО — в подвале сайта</li>
+        </ul>
+        <button class="btn btn-ghost" id="callMeasurer" type="button" data-act="measure">Не знаете размеры? Вызвать замерщика</button>
+        <a class="call-link" href="tel:+74950056971">Позвонить +7 495 005-69-71</a>
         <p class="fine">Изготовим по вашим размерам. Сомневаетесь — выберите «Не знаю размеров», замер бесплатный. Цены с меткой «демо» ориентировочные.</p>
       </aside>
     </div>
@@ -192,7 +206,7 @@
         <ul class="check-list">
           <li>Изготовление по вашим размерам</li>
           <li>Покраска — видна в расчёте заранее</li>
-          <li>Замок, проушины и опции — по выбору</li>
+          <li>Замок, петли под навесной замок и опции — по выбору</li>
           <li>Монтаж — ставка за м², не процент</li>
           <li>Доставка по Москве — 5 000 ₽ на весь заказ</li>
         </ul>
@@ -208,7 +222,7 @@
         <!-- TODO: verify fire-safety wording against official regulations before launch -->
         <p>Решётка, через которую возможна эвакуация, должна открываться изнутри без ключа. Подберём вариант под требования вашего объекта.</p>
         <ul class="check-list">
-          <li>Для окон, через которые нужен выход, — створка или люк-створка в глухой решётке.</li>
+          <li>Для окон, через которые нужен выход, — створка или дверца-люк в глухой решётке.</li>
           <li>Изнутри — запор или замок, который открывается без ключа.</li>
           <li>Требования к объекту уточним на замере.</li>
         </ul>
@@ -219,7 +233,7 @@
           <li>Цена в рублях строками, а не «от N ₽/м²»</li>
           <li>Схемы открывания с анимацией</li>
           <li>Несколько проёмов и оба типа решёток в одном расчёте</li>
-          <li>Онлайн-оплата 70% и ТЗ прямо в форме</li>
+          <li>Онлайн-оплата 70% и задание (ТЗ) прямо в форме</li>
         </ul>
       </article>
     </div>
@@ -230,8 +244,8 @@
   <div class="wrap">
     <div class="card feedback-card">
       <div>
-        <h2 id="feedbackTitle">Отправить ТЗ, проект или фото</h2>
-        <p class="sub">Посчитаем и пришлём КП в течение рабочего дня. Для компаний, тендеров и нестандартных проёмов. PDF, Word, Excel, DWG, фото, ZIP — до 5 файлов, 20 МБ.</p>
+        <h2 id="feedbackTitle">Отправить задание (ТЗ), проект или фото</h2>
+        <p class="sub">Посчитаем и пришлём расчёт (КП) в течение рабочего дня. Для компаний, тендеров и нестандартных проёмов. PDF, Word, Excel, DWG, фото, ZIP — до 5 файлов, 20 МБ.</p>
       </div>
       <form class="form-grid" id="feedbackForm" novalidate>
         <label class="field">Имя или компания<input type="text" name="name" autocomplete="organization" required></label>
@@ -239,8 +253,10 @@
           <label class="field">Телефон<input type="tel" name="phone" autocomplete="tel" placeholder="+7"></label>
           <label class="field">Почта<input type="email" name="email" autocomplete="email"></label>
         </div>
+        <label class="field">ИНН организации (необязательно)<input type="text" name="inn" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="10 или 12 цифр"></label>
         <label class="field">Сообщение<textarea name="comment" placeholder="Что нужно сделать, сроки, адрес объекта"></textarea></label>
         <div data-attach></div>
+        <label class="toggle"><input type="checkbox" name="invoice"> Нужен счёт или договор</label>
         <label class="toggle"><input type="checkbox" name="consent"> Согласен на обработку персональных данных</label>
         <div class="err" role="alert"></div>
         <button class="btn btn-dark" type="submit">Отправить</button>
@@ -255,12 +271,12 @@
     <h2 id="faqTitle">Частые вопросы</h2>
     <details class="faq"><summary>Как снять размеры и кто за них отвечает?</summary><p>Ширину и высоту проёма меряйте в трёх местах и берите наименьшее значение, в миллиметрах. Если размеры указали вы, за их точность отвечаете вы: решётку изготовят точно по ним, а переделка из-за ошибки оплачивается отдельно. Сомневаетесь — вызовите замерщика, это бесплатно.</p></details>
     <details class="faq"><summary>Можно ли в одном заказе раздвижные и сварные решётки?</summary><p>Да. Добавьте позицию на каждый проём — «+ Раздвижная» или «+ Сварная». Монтаж считается по ставке своего типа, доставка одна на весь заказ, предоплата 70% — одним платежом.</p></details>
-    <details class="faq"><summary>Сколько стоят монтаж и доставка?</summary><p>Монтаж раздвижных — 3 500 ₽/м², сварных — 3 000 ₽/м², анкеры включены. Доставка по Москве — 5 000 ₽ на весь заказ, за МКАД — 5 000 ₽ + 80 ₽/км. Без монтажа можно забрать самовывозом.</p></details>
+    <details class="faq"><summary>Сколько стоят монтаж и доставка?</summary><p>Монтаж раздвижных — 3 500 ₽/м², сварных — 3 000 ₽/м², анкеры включены. Доставка по Москве (в пределах МКАД) — 5 000 ₽ на весь заказ, за МКАД, включая Химки, Мытищи и Балашиху, — 5 000 ₽ + 80 ₽ за каждый км от МКАД до адреса. Без монтажа можно забрать самовывозом.</p></details>
     <details class="faq"><summary>Чем раздвижная решётка отличается от сварной со створкой?</summary><p>Раздвижная складывается в сторону гармошкой и днём почти не занимает места — удобно для витрин и дверей; в сложенном виде займёт примерно 15–20% ширины проёма. Сварная со створкой открывается как дверь: она жёстче и обычно дешевле, но створке нужно место для поворота.</p></details>
     <!-- TODO: verify fire-safety wording against official regulations before launch -->
-    <details class="faq"><summary>Что такое люк-створка и можно ли открыть решётку при пожаре?</summary><p>Люк-створка — небольшая дверца в глухой сварной решётке: решётка остаётся прочной, а через люк можно выбраться наружу. По умолчанию люк 600×800 мм, точный размер подбираем на замере. Открыть решётку при пожаре можно, если выбрать вариант со створкой или люком и запор, который открывается изнутри без ключа. Глухая решётка не открывается.</p></details>
+    <details class="faq"><summary>Что такое дверца-люк (люк-створка) и можно ли открыть решётку при пожаре?</summary><p>Дверца-люк (люк-створка) — небольшая дверца в глухой сварной решётке: решётка остаётся прочной, а через люк можно выбраться наружу. По умолчанию люк 600×800 мм, точный размер подбираем на замере. Открыть решётку при пожаре можно, если выбрать вариант со створкой или люком и запор, который открывается изнутри без ключа. Решётка, которая не открывается (глухая), выхода не даёт.</p></details>
     <details class="faq"><summary>Почему для низких раздвижных решёток цена выше?</summary><p>Для раздвижных решёток ниже 1200 мм действует наценка 30%: механизм тот же, а площадь меньше.</p></details>
-    <details class="faq"><summary>Можно ли оплатить по счёту от юрлица?</summary><p>Да. Отправьте реквизиты через форму «Отправить ТЗ» — выставим счёт.</p></details>
+    <details class="faq"><summary>Можно ли оплатить по счёту от юрлица?</summary><p>Да. Выберите «Организация» при оформлении заказа или отправьте реквизиты через форму «Отправить задание» — выставим счёт.</p></details>
   </div>
 </section>
 </main>
@@ -274,24 +290,43 @@
 </footer>
 
 <div class="mobile-total" id="mobileTotal" role="region" aria-label="Итог заказа" hidden>
-  <div><small><span id="mTitle"></span> · предоплата <span id="mPrepay"></span></small><b id="mTotal">0 ₽</b></div>
-  <button class="btn btn-accent" type="button" id="mCheckout">Оформить</button>
+  <div><small><span class="m-pos"><span id="mTitle"></span> · </span>предоплата <span id="mPrepay"></span></small><b id="mTotal">0 ₽</b></div>
+  <div class="mobile-actions">
+    <a class="btn btn-call" href="tel:+74950056971">Позвонить</a>
+    <button class="btn btn-accent" type="button" id="mCheckout">Оформить</button>
+  </div>
 </div>
 
 <dialog id="checkout" aria-labelledby="dlgTitle">
   <form class="dlg" id="checkoutForm" novalidate>
     <h3 id="dlgTitle">Оформление заказа</h3>
     <p class="sub" id="dlgSum"></p>
+    <!-- TODO owner: contract timing and prepayment refund terms -->
+    <ul class="trust" aria-label="Что важно знать перед оплатой">
+      <li>Замер бесплатный</li>
+      <li class="js-rest-note">Остаток 30% — после монтажа</li>
+      <li>Гарантия 12 месяцев</li>
+      <li>Реквизиты ООО — в подвале сайта</li>
+    </ul>
+    <fieldset class="payer" id="payerBox">
+      <legend>Плательщик</legend>
+      <label class="payer-opt"><input type="radio" name="payer" value="person" checked><span>Физическое лицо</span></label>
+      <label class="payer-opt"><input type="radio" name="payer" value="org"><span>Организация (ООО, ИП)</span></label>
+    </fieldset>
+    <div class="org-fields" id="orgFields" hidden>
+      <label class="field">Название организации<input type="text" name="orgName" autocomplete="organization"></label>
+      <label class="field">ИНН<input type="text" name="inn" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="10 или 12 цифр"></label>
+    </div>
     <label class="field">Имя<input type="text" name="name" autocomplete="name" required></label>
     <div class="row">
       <label class="field">Телефон<input type="tel" name="phone" autocomplete="tel" placeholder="+7" required></label>
-      <label class="field">Почта для чека<input type="email" name="email" autocomplete="email" required></label>
+      <label class="field"><span id="emailLabel">Почта для чека</span><input type="email" name="email" autocomplete="email" required></label>
     </div>
     <label class="field" id="addrField">Адрес<input type="text" name="address" autocomplete="street-address"></label>
     <label class="field">Комментарий<textarea name="comment" style="min-height:60px"></textarea></label>
     <div data-attach></div>
     <label class="toggle" style="align-items:flex-start"><input type="checkbox" name="sizes">
-      <span>Размеры снял(а) я сам(а) и отвечаю за их точность. Решётку изготовят по этим размерам; переделка из-за ошибки в размерах оплачивается отдельно.</span></label>
+      <span>Размеры я указал(а) сам(а) и подтверждаю, что они верны. Решётку изготовят по этим размерам; если ошибка в размерах — переделка оплачивается отдельно. Не уверены — выберите бесплатный замер.</span></label>
     <label class="toggle"><input type="checkbox" name="consent"> Согласен с офертой и обработкой персональных данных</label>
     <div class="err" role="alert"></div>
     <div class="actions">
@@ -313,6 +348,8 @@
 <script src="calc-weld.js"></script>
 <script src="calc-order.js"></script>
 <script src="order-state.js"></script>
+<script src="size-advice.js"></script>
+<script src="inn.js"></script>
 <script src="advisor.js"></script>
 <script src="grille-anim.js"></script>
 <script src="weld-anim.js"></script>

@@ -11,8 +11,8 @@
   const MIN_ADDRESS_LEN = 5;
 
   const MODES = [
-    { id: "self", name: "Знаю размеры, монтаж не нужен", note: "Изготовим по вашим размерам, доставим или отдадим самовывозом.", pay: "Оплата на сайте" },
-    { id: "install", name: "Знаю размеры, нужен монтаж", note: "Привезём и установим. За точность размеров отвечаете вы.", pay: "Оплата на сайте" },
+    { id: "self", name: "Знаю размеры, монтаж не нужен", note: "Изготовим по вашим размерам, доставим или отдадим самовывозом.", pay: "Оплата 70% на сайте, остаток при получении" },
+    { id: "install", name: "Знаю размеры, нужен монтаж", note: "Привезём и установим. За точность размеров отвечаете вы.", pay: "Оплата 70% на сайте, остаток после монтажа" },
     { id: "measure", name: "Не знаю размеров", note: "Бесплатный замер — точную цену посчитает замерщик.", pay: "Оплата после замера" },
   ];
 
@@ -67,7 +67,7 @@
     });
   }
 
-  /* ---------- Attachments (ТЗ, drawings, photos) ---------- */
+  /* ---------- Attachments (task files, drawings, photos) ---------- */
 
   const acceptedExt = ATTACHMENTS.accept.split(",");
 
@@ -77,7 +77,7 @@
     let error = "";
     container.innerHTML = `
       <label class="attach"><input type="file" multiple accept="${ATTACHMENTS.accept}">
-        <b>Прикрепить ТЗ, чертёж или фото</b><br>или перетащите файлы сюда · до ${ATTACHMENTS.maxFiles} файлов, ${ATTACHMENTS.maxTotalMb} МБ</label>
+        <b>Прикрепить задание (ТЗ), чертёж или фото</b><br>или перетащите файлы сюда · до ${ATTACHMENTS.maxFiles} файлов, ${ATTACHMENTS.maxTotalMb} МБ</label>
       <ul class="files"></ul><div class="err" role="alert"></div>`;
     const input = container.querySelector("input");
     const drop = container.querySelector(".attach");
@@ -192,33 +192,56 @@
   let order = null; // snapshot of the order being paid: { title, positions, total, prepay, rest, pieces, mode, needsAddress }
   const dlg = el("checkout");
   const checkoutForm = el("checkoutForm");
+  const isOrg = (form) => form.elements.payer.value === "org";
+  const innError = (form) => (isOrg(form) ? window.Inn.validateInn(value(form, "inn")).message : "");
+
   const checkout = bindForm(checkoutForm, [
+    (form) => (isOrg(form) && value(form, "orgName").length < 2 ? "Укажите название организации." : ""),
+    innError,
     need("name", "Укажите имя."),
     needPhone,
-    (form) => (emailOk(value(form, "email")) ? "" : "Укажите почту — на неё придёт чек."),
+    (form) => (emailOk(value(form, "email")) ? "" : `Укажите почту — на неё придёт ${isOrg(form) ? "счёт" : "чек"}.`),
     (form) => (order.needsAddress && value(form, "address").length < MIN_ADDRESS_LEN ? "Укажите адрес доставки или монтажа." : ""),
-    (form) => (checked(form, "sizes") ? "" : "Подтвердите, что отвечаете за точность размеров."),
+    (form) => (checked(form, "sizes") ? "" : "Подтвердите, что размеры указаны верно."),
     needConsent,
-  ], (form, files) => `<b>Здесь откроется страница оплаты ЮKassa</b>
-    <span class="hint">Сумма ${rub(order.prepay)} — карта, СБП, SberPay. Чек придёт на ${esc(value(form, "email"))}.${filesNote(files)}</span>`);
+  ], (form, files) => (isOrg(form)
+    ? `<b>Спасибо! Счёт на ${rub(order.prepay)} пришлём на почту в течение рабочего дня (заглушка прототипа)</b>
+    <span class="hint">${esc(value(form, "orgName"))}, ИНН ${esc(value(form, "inn"))}. Почта: ${esc(value(form, "email"))}.${filesNote(files)}</span>`
+    : `<b>Здесь откроется страница оплаты ЮKassa</b>
+    <span class="hint">Сумма ${rub(order.prepay)} — карта, СБП, SberPay. Чек придёт на ${esc(value(form, "email"))}.${filesNote(files)}</span>`));
+
+  /** Texts and fields that depend on the payer (person pays by card, organisation gets an invoice). */
+  function applyPayer() {
+    const org = isOrg(checkoutForm);
+    el("orgFields").hidden = !org;
+    el("emailLabel").textContent = org ? "Почта для счёта" : "Почта для чека";
+    el("payBtn").textContent = org ? "Получить счёт на оплату" : `Оплатить ${rub(order.prepay)} через ЮKassa`;
+    el("dlgSum").textContent = checkoutSummaryText(org);
+    checkout.reset();
+  }
+
+  function checkoutSummaryText(org) {
+    const rest = order.mode === "install" ? "после монтажа" : "при получении";
+    return `${order.title}: позиций ${order.positions}, ${order.pieces} шт. на ${rub(order.total)}. `
+      + `${org ? "Предоплата по счёту" : "Сейчас оплачиваете"} ${rub(order.prepay)}, ${rub(order.rest)} — ${rest}.`;
+  }
 
   function openCheckout(summary) {
     order = summary;
-    el("dlgSum").textContent = `${summary.title}: позиций ${summary.positions}, ${summary.pieces} шт. на ${rub(summary.total)}. Сейчас оплачиваете ${rub(summary.prepay)}, `
-      + (summary.mode === "install" ? `${rub(summary.rest)} — после монтажа.` : `${rub(summary.rest)} — при получении.`);
     el("addrField").hidden = !summary.needsAddress;
-    el("payBtn").textContent = `Оплатить ${rub(summary.prepay)} через ЮKassa`;
-    checkout.reset();
+    applyPayer();
     dlg.showModal();
   }
+  checkoutForm.querySelectorAll('input[name="payer"]').forEach((r) => r.addEventListener("change", applyPayer));
   checkoutForm.querySelector('[data-flow="close"]').addEventListener("click", () => dlg.close());
 
   bindForm(el("feedbackForm"), [
     need("name", "Укажите имя или компанию."),
     (form) => (phoneOk(value(form, "phone")) || emailOk(value(form, "email")) ? "" : "Оставьте телефон или почту для ответа."),
-    (form, files) => (value(form, "comment") || files.length ? "" : "Напишите сообщение или прикрепите ТЗ."),
+    (form) => (value(form, "inn") ? window.Inn.validateInn(value(form, "inn")).message : ""),
+    (form, files) => (value(form, "comment") || files.length ? "" : "Напишите сообщение или прикрепите задание (ТЗ)."),
     needConsent,
-  ], (form, files) => `<b>Отправлено</b><span class="hint">Посчитаем и пришлём КП в течение рабочего дня.${filesNote(files)}</span>`);
+  ], (form, files) => `<b>Отправлено</b><span class="hint">Посчитаем и пришлём расчёт (КП)${checked(form, "invoice") ? ", счёт или договор" : ""} в течение рабочего дня.${filesNote(files)}</span>`);
 
   /* ---------- Sticky mobile total ----------
    * The order calculator registers its section and a getter returning its checkout summary
@@ -234,6 +257,8 @@
     el("mTitle").textContent = summary.short;
     el("mTotal").textContent = rub(summary.total);
     el("mPrepay").textContent = rub(summary.prepay);
+    // Keep the page content clear of the fixed bar whatever height it has on this screen.
+    document.body.style.setProperty("--total-h", `${el("mobileTotal").offsetHeight}px`);
   }
 
   const observer = new IntersectionObserver((entries) => {

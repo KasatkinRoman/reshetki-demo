@@ -47,7 +47,11 @@
     const notes = ed.sizeNotes(p);
     el("sizeHint").textContent = notes.text;
     el("sizeHint").classList.toggle("warn", notes.warn);
+    const advice = window.SizeAdvice.sizeAdvice(p);
+    el("sizeAdvice").innerHTML = advice.map((t) => `<div>${esc(t)}.</div>`).join("");
+    el("sizeAdvice").hidden = advice.length === 0;
     el("removeActive").dataset.val = String(order.active);
+    el("copyActive").dataset.val = String(order.active);
   }
 
   function renderEditor(p) {
@@ -59,7 +63,7 @@
     const install = order.mode === "install";
     el("deliveryTitle").textContent = install ? "Монтаж и доставка" : "Доставка";
     el("delivery").innerHTML = allowedDelivery(order.mode).map((d) => {
-      const price = d.perKm ? `${rub(d.price)} + ${d.perKm} ₽/км` : rub(d.price);
+      const price = d.perKm ? `${rub(d.price)} + ${d.perKm} ₽ за каждый км от МКАД до адреса` : rub(d.price);
       return chip("delivery", d.id, `${d.name} — ${price}${demoTag(d)}`, order.delivery === d.id);
     }).join("");
     el("kmField").hidden = order.delivery !== "region";
@@ -94,7 +98,12 @@
     el("prepay").textContent = rub(t.prepay);
     el("rest").textContent = rub(t.rest);
     el("restLabel").textContent = order.mode === "install" ? "После монтажа 30%" : "При получении 30%";
+    const restNote = `Остаток 30% — ${order.mode === "install" ? "после монтажа" : "при получении"}`;
+    document.querySelectorAll(".js-rest-note").forEach((li) => { li.textContent = restNote; });
     el("toCheckout").disabled = !p;
+    const full = !St.canAddPosition(order);
+    el("copyActive").disabled = full;
+    document.querySelectorAll('[data-act="add"]').forEach((b) => { b.disabled = full; });
   }
 
   function renderNotice() {
@@ -150,9 +159,15 @@
 
   const common = {
     mode: (val) => commit(St.setOrder(order, { mode: val })),
+    /* «Вызвать замерщика»: switch to the «Не знаю размеров» mode and bring the measurer form into view. */
+    measure: () => {
+      commit(St.setOrder(order, { mode: "measure" }));
+      el("measurePanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    },
     tab: (val) => commit(St.setOrder(order, { active: Number(val) })),
     remove: (val) => commit(St.removePosition(order, Number(val))),
     add: (val) => commit(St.addPosition(order, val)),
+    copy: (val) => commit(St.copyPosition(order, Number(val))),
     kind: (val) => commit(St.changeKind(order, order.active, val)),
     delivery: (val) => commit(St.setOrder(order, { delivery: val })),
   };
@@ -210,7 +225,7 @@
     if (s) window.UI.openCheckout(s);
   });
   window.UI.registerTotal(el("order"), summary);
-  window.UI.mountMeasurePanel(el("measurePanel"), "order", "Например: 3 окна на первом этаже, одно с люком, и раздвижная решётка на дверь магазина");
+  window.UI.mountMeasurePanel(el("measurePanel"), "order", "Например: 3 окна на первом этаже, одно с дверцей-люком, и раздвижная решётка на дверь магазина");
 
   render();
 

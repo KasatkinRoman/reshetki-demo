@@ -55,7 +55,7 @@
     const tooBig = o.width > PRICING.maxWidthMm || o.height > PRICING.maxHeightMm;
     const notes = [];
     if (tooSmall) notes.push(`Минимальный размер — ${PRICING.minSizeMm} мм, считаем по нему.`);
-    if (tooBig) notes.push(`Больше ${PRICING.maxWidthMm}×${PRICING.maxHeightMm} мм — посчитаем индивидуально, отправьте ТЗ.`);
+    if (tooBig) notes.push(`Больше ${PRICING.maxWidthMm}×${PRICING.maxHeightMm} мм — посчитаем индивидуально, отправьте задание (ТЗ).`);
     if (!tooSmall && S.isLowHeight(o)) notes.push(`Высота меньше ${PRICING.lowHeightMm} мм — наценка ${PRICING.lowHeightSurcharge * 100}%.`);
     if (!tooSmall) notes.push(`В сложенном виде займёт около ${Math.round(S.pricedWidth(o) * PRICING.foldedShare)} мм сбоку.`);
     if (o.width >= TWO_WAY_HINT_MM && !o.options.twoWay) notes.push("Для такой ширины удобно «Раздвигание в две стороны».");
@@ -80,11 +80,13 @@
       return;
     }
     const finishes = FINISHES.map((f) =>
-      chip("finish", f.id, f.name + (f.perM2 ? ` +${rub(f.perM2)}/м²` : " — в цене"), o.finish === f.id)).join("");
+      chip("finish", f.id, f.name + (f.perM2 ? ` — +${rub(f.perM2)}/м²` : " — в цене"), o.finish === f.id)).join("");
     const patina = model.patina
       ? `<div class="sub-title">Патина (входит в цену)</div><div class="chips">${PATINAS.map((p) => chip("patina", p, p, o.patina === p)).join("")}</div>`
       : "";
-    el("finish").innerHTML = `<div class="chips">${finishes}</div>
+    const colorNote = o.finish === "white" ? ""
+      : '<p class="hint">Номер цвета по каталогу RAL укажите в комментарии к заказу.</p>';
+    el("finish").innerHTML = `<div class="chips" role="group" aria-label="Вид покраски">${finishes}</div>${colorNote}
       <label class="opt ${o.zinc ? "is-on" : ""}" style="margin-top:10px">
         <span><b>Гальваническое цинкование${demoTag({ source: "competitor" })}</b><small>дополнительная защита от коррозии, для улицы</small></span>
         <span class="ctl">+${rub(D.ZINC_PER_M2)}/м² <input type="checkbox" data-check="zinc" ${o.zinc ? "checked" : ""}></span>
@@ -98,7 +100,7 @@
     const lock = byId(LOCKS, o.lock);
     const chips = S.allowedLocks(model).map((l) =>
       chip("lock", l.id, l.name + (l.price ? ` — ${rub(l.price)}` : "") + demoTag(l), o.lock === l.id)).join("");
-    const extras = lock.id === "none" ? '<p class="hint">Без замка можно запирать на навесной — добавьте проушины в опциях.</p>' : `
+    const extras = lock.id === "none" ? '<p class="hint">Без замка можно запирать на навесной — добавьте «петли под навесной замок» в опциях.</p>' : `
       <div class="opts" style="margin-top:10px">
         <div class="opt"><span><b>Количество замков</b><small>второй замок — для высоких решёток</small></span><span class="ctl">${stepper("lockQty", "lock", o.lockQty, MAX_LOCKS)}</span></div>
         <label class="opt ${o.masterKey ? "is-on" : ""}"><span><b>«Мастер-ключ»${demoTag({ source: "competitor" })}</b><small>один ключ ко всем решёткам в доме или офисе</small></span>
