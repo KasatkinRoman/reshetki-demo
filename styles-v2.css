@@ -155,7 +155,8 @@ nav a { min-width: 44px; text-align: center; }
 .why-card h3 { font-size: 19px; margin-bottom: 12px; }
 .why-card p { margin: 0 0 12px; }
 .why-card .check-list { gap: 6px; font-size: 15px; }
-.why-card .terms-row b { min-width: 0; white-space: nowrap; font-size: 24px; }
+.why-card .terms-row { flex-direction: column; align-items: flex-start; gap: 2px; }
+.why-card .terms-row b { min-width: 0; flex: none; white-space: nowrap; font-size: 24px; }
 .feedback-card { display: grid; grid-template-columns: .8fr 1.2fr; gap: 24px; align-items: start; }
 .feedback-card .sub { margin-bottom: 0; }
 @media (max-width: 860px) { .feedback-card { grid-template-columns: 1fr; gap: 12px; } }
